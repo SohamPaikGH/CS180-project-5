@@ -22,7 +22,7 @@ class StoreApplication extends JFrame implements ActionListener {
     boolean loginCompleted = false;
 
     public StoreApplication() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
 //        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(800,600);
         setTitle("Login");
@@ -48,6 +48,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         btn = new JButton("Sign in");
         btn.setBounds(300, 320, 100, 40);
+        btn.addActionListener(StoreApplication.this);
 
         add(label_username);
         add(username);
@@ -55,15 +56,6 @@ class StoreApplication extends JFrame implements ActionListener {
         add(password);
         add(btn);
         add(message);
-
-        if (loginCompleted) {
-            remove(label_username);
-            remove(username);
-            remove(label_password);
-            remove(password);
-            remove(btn);
-            remove(message);
-        }
 
         // Start main application
 //        JComponent tabbedPane = initializeApp();
@@ -74,7 +66,19 @@ class StoreApplication extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    protected JComponent initializeApp() {
+    protected void initializeApp() {
+        JFrame frame = new JFrame("Store Application");
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(size);
+
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         JTabbedPane tabbedPane = new JTabbedPane();
         JComponent panel1 = createAccountSettingsPane();
         tabbedPane.addTab("Account Settings", null, panel1);
@@ -88,7 +92,10 @@ class StoreApplication extends JFrame implements ActionListener {
         tabbedPane.addTab("Dashboard", null, panel3);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        return tabbedPane;
+        frame.getContentPane().add(tabbedPane);
+        frame.setVisible(true);
+        frame.setResizable(true);
+
     }
 
     protected JComponent createAccountSettingsPane() {
@@ -124,7 +131,9 @@ class StoreApplication extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btn) {
-            loginCompleted = true;
+//            dispatchEvent(new WindowEvent(StoreApplication.this, WindowEvent.WINDOW_CLOSING));
+            setVisible(false);
+            EventQueue.invokeLater(this::initializeApp);
         }
     }
 }
