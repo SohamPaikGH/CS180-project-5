@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 /**
  * Program Name
@@ -17,6 +18,8 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField username;
     JLabel label_password, label_username, message, title;
     JButton btn;
+    ArrayList<JComponent> components;
+    boolean loginCompleted = false;
 
     public StoreApplication() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -27,6 +30,7 @@ class StoreApplication extends JFrame implements ActionListener {
         setLayout(null);
 
         // Start login page
+
         label_username = new JLabel("Username");
         label_username.setBounds(200, 200, 100, 40);
 
@@ -52,6 +56,14 @@ class StoreApplication extends JFrame implements ActionListener {
         add(btn);
         add(message);
 
+        if (loginCompleted) {
+            remove(label_username);
+            remove(username);
+            remove(label_password);
+            remove(password);
+            remove(btn);
+            remove(message);
+        }
 
         // Start main application
 //        JComponent tabbedPane = initializeApp();
@@ -111,6 +123,8 @@ class StoreApplication extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource() == btn) {
+            loginCompleted = true;
+        }
     }
 }
