@@ -7,9 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-<<<<<<< HEAD
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
-=======
     <orderEntry type="module-library">
       <library name="JUnit5.8.1">
         <CLASSES>
@@ -46,6 +44,5 @@
         <SOURCES />
       </library>
     </orderEntry>
->>>>>>> c3d213c9761ebd3c36afaf5df86739679cd6ec3c
   </component>
 </module>
