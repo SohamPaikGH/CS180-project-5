@@ -1,2 +1,0 @@
-test2@gmail.com,test2,test234,Seller,1,1test1,1test1
-test1@gmail.com,test1,test123,Customer,3

@@ -1,4 +1,0 @@
-11,test6: What are you selling?
-11,test6: If it's good, I'll order it!
-11,test1: I will respond as soon as possible.
-11,test6: Ok, thanks!
