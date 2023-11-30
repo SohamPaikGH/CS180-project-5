@@ -1,4 +1,0 @@
-
-test2:2
-test5:2
-test6:3
