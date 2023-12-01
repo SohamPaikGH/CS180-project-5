@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Message {
     private String senderID;        // ID of the sender of the message
     private String recipientID;     // ID of the recipient of the message
@@ -68,14 +70,36 @@ public class Message {
      * @return the length of the conversation
      */
     public static long getConversationLength(String senderID, String recipientID) {
-        Message[] messages = Account.getMessages(senderID);
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));
         long conversationLength = 0;
         for (Message message : messages) {
-            if (message.recipientID.equals(recipientID)) {
+            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
                 conversationLength++;
             }
         }
         return conversationLength;
+    }
+
+    /**
+     * Returns an array of all the messages between the sender and the recipient (in order)
+     * @param senderID the sender ID
+     * @param recipientID the recipient ID
+     * @return an array of all the messages between the two
+     */
+    public static Message[] getConversationArray(String senderID, String recipientID) {
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));
+        ArrayList<Message> conversationList = new ArrayList<>();
+        for (Message message : messages) {
+            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
+                conversationList.add(message);
+            }
+        }
+
+        Message[] conversationArray = new Message[conversationList.size()];
+        for (int i = 0; i < conversationList.size(); i++) {
+            conversationArray[i] = conversationList.get(i);
+        }
+        return conversationArray;
     }
 
     /**
@@ -104,5 +128,62 @@ public class Message {
         }
         newRecipientMessages[newRecipientMessages.length - 1] = toSend;
         Account.setMessages(recipientID, newRecipientMessages);
+    }
+
+    /**
+     * Edits the contents of the specific message to newMessage
+     * @param senderID the sender ID
+     * @param recipientID the recipient ID
+     * @param order the order of the message
+     * @param newMessage the new content of the message
+     */
+    public static void editMessage(String senderID, String recipientID, long order, String newMessage) {
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));
+        for (Message message : messages) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+                    && message.order == order) {
+                message.message = newMessage;
+                break;
+            }
+        }
+        Account.setMessages(Account.toUserID(senderID), messages);
+
+        messages = Account.getMessages(Account.toUserID(recipientID));
+        for (Message message : messages) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+                    && message.order == order) {
+                message.message = newMessage;
+                break;
+            }
+        }
+        Account.setMessages(Account.toUserID(recipientID), messages);
+    }
+
+    /**
+     * Deletes the specific message
+     * @param senderID the sender ID
+     * @param recipientID the recipient ID
+     * @param order the order of the message
+     */
+    public static void deleteMessage(String senderID, String recipientID, long order) {
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));
+        for (Message message : messages) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+                    && message.order == order) {
+                message.deleted = true;
+                break;
+            }
+        }
+        Account.setMessages(Account.toUserID(senderID), messages);
+
+        messages = Account.getMessages(Account.toUserID(recipientID));
+        for (Message message : messages) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+                    && message.order == order) {
+                message.deleted = true;
+                break;
+            }
+        }
+        Account.setMessages(Account.toUserID(recipientID), messages);
     }
 }

@@ -530,4 +530,66 @@ public class Account {
         }
         return null;
     }
+
+    /**
+     * Returns the ID of the user with the username
+     * @param username the username
+     * @return the ID of the user
+     */
+    public static String IDofUsername(String username) {
+        Account[] accounts = readAccountsData();
+        for (Account account : accounts) {
+            if (account.username.equals(username)) {
+                return account.ID;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the ID of the store with the username
+     * @param storename the storename
+     * @return the ID of the user
+     */
+    public static String IDofStorename(String storename) {
+        Account[] accounts = readAccountsData();
+        for (Account account : accounts) {
+            for (Store store : account.stores) {
+                if (store.getName().equals(storename)) {
+                    return store.getID();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * returns true if userOne is blocked by userTwo
+     * @param userOneID user one ID
+     * @param userTwoID user two ID
+     * @return whether userOne is blocked by userTwo
+     */
+    public static boolean userBlockedByUser(String userOneID, String userTwoID) {
+        for (String ID : getBlocked(userTwoID)) {
+            if (ID.equals(userOneID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * returns true if userOne can't see userTwo
+     * @param userOneID user one ID
+     * @param userTwoID user two ID
+     * @return whether userOne can see userTwo
+     */
+    public static boolean userCantSeeUser(String userOneID, String userTwoID) {
+        for (String ID : getInvisibleTo(userTwoID)) {
+            if (ID.equals(userOneID)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
