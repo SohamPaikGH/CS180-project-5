@@ -207,16 +207,16 @@ class StoreApplication extends JFrame implements ActionListener {
     }
 
     private static TableModel getTableModel() {
-        String[][] data = {
-                {"Walmart", "Sam Walton"},
-                {"Publix", "George W. Jenkins"},
-                {"Target", "Dayton Hudson"},
-                {"Walgreens", "Walgreen Boosts Alliance, Inc."},
-                {"Amazon", "Jeff Bezos"},
-                {"Aldi", "Die Familie Albrecht"}
+        Object[][] data = {
+                {"Walmart", "Sam Walton", null},
+                {"Publix", "George W. Jenkins", null},
+                {"Target", "Dayton Hudson", null},
+                {"Walgreens", "Walgreen Boosts Alliance, Inc.", null},
+                {"Amazon", "Jeff Bezos", null},
+                {"Aldi", "Die Familie Albrecht", null}
         };
 
-        String[] columnNames = new String[] {"Stores", "Owner"};
+        String[] columnNames = new String[] {"Stores", "Owner", "Actions"};
         TableModel tableModel = new DefaultTableModel(data, columnNames) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -224,6 +224,43 @@ class StoreApplication extends JFrame implements ActionListener {
         };
         return tableModel;
     }
+
+//    private void createStoreContactWindow() {
+//        JFrame frame = new JFrame("Contact Store");
+//
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new GridBagLayout());
+//        panel.setOpaque(true);
+//
+//        GridBagConstraints c = new GridBagConstraints();
+//
+//        JLabel label1 = new JLabel("Message");
+//        c.gridx = 0;
+//        c.gridy = 0;
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        panel.add(label1, c);
+//
+//        JTextField textField = new JTextField(20);
+//        c.gridx = 0;
+//        c.gridy = 1;
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        panel.add(textField, c);
+//
+//        JButton sendButton = new JButton("Send");
+//        sendButton.setPreferredSize(new Dimension(100, 40));
+//        c.gridx = 0;
+//        c.gridy = 2;
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        panel.add(sendButton, c);
+//
+//        frame.getContentPane().add(BorderLayout.CENTER, panel);
+//    }
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
