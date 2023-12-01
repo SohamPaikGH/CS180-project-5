@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,16 +17,19 @@ import java.util.ArrayList;
  */
 class StoreApplication extends JFrame implements ActionListener {
     JPasswordField password;
-    JTextField username;
+    JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
     JButton signInButton;
     JButton saveButton = new JButton("Save");
+    JButton clearButton = new JButton("Clear");
     ArrayList<JComponent> components;
     boolean loginCompleted = false;
 
+    // if true, user is customer; if false, user is seller
+    boolean isCustomer = true;
+
     public StoreApplication() {
-//        setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800,600);
         setTitle("Login");
         setLocationRelativeTo(null);
@@ -54,11 +59,6 @@ class StoreApplication extends JFrame implements ActionListener {
         add(password);
         add(signInButton);
 
-        // Start main application
-//        JComponent tabbedPane = initializeApp();
-
-
-//        add(tabbedPane);
         setResizable(false);
         setVisible(true);
     }
@@ -108,12 +108,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(usernameLbl, c);
 
-        JTextField username = new JTextField(20);
-        username.setPreferredSize(new Dimension(300, 40));
+        usernameSetting = new JTextField(20);
+        usernameSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
-        panel.add(username, c);
+        panel.add(usernameSetting, c);
 
         JLabel emailLbl = new JLabel("Email");
         emailLbl.setPreferredSize(new Dimension(100, 40));
@@ -122,12 +122,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 3;
         panel.add(emailLbl, c);
 
-        JTextField email = new JTextField(20);
-        email.setPreferredSize(new Dimension(300, 40));
+        emailSetting = new JTextField(20);
+        emailSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 4;
-        panel.add(email, c);
+        panel.add(emailSetting, c);
 
         JLabel passwordLbl = new JLabel("Password");
         passwordLbl.setPreferredSize(new Dimension(100, 40));
@@ -136,12 +136,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 5;
         panel.add(passwordLbl, c);
 
-        JTextField password = new JTextField(20);
-        password.setPreferredSize(new Dimension(300, 40));
+        passwordSetting = new JTextField(20);
+        passwordSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 6;
-        panel.add(password, c);
+        panel.add(passwordSetting, c);
 
         saveButton.setPreferredSize(new Dimension(100, 40));
         saveButton.addActionListener(StoreApplication.this);
@@ -150,35 +150,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 7;
         panel.add(saveButton, c);
 
-//        JLabel title = new JLabel("Account Settings");
-//
-//        JTable jTable1 = new JTable();
-//        JScrollPane jScrollPane1 = new JScrollPane();
-//
-//        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-//                new Object [][] {
-//                        {"Username", null},
-//                        {"Email", null},
-//                        {"Password", null},
-//                        {"Role", null}
-//                },
-//                new String [] {
-//                        "Fields", "Information"
-//                }
-//        ));
-//        jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 200));
-//        jScrollPane1.setViewportView(jTable1);
-//        jScrollPane1.getViewport().setOpaque(true);
-//        jScrollPane1.setViewportBorder(null);
-//
-//        String[] options = {"Username", "Email", "Password", "Role", "ID"};
-//        JComboBox editList = new JComboBox(options);
-//
-//        subPanel1.add(title);
-//        subPanel2.add(jScrollPane1);
-//        subPanel3.add(editList);
-
-
+        clearButton.setPreferredSize(new Dimension(100, 40));
+        clearButton.addActionListener(StoreApplication.this);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 8;
+        panel.add(clearButton, c);
 
         return panel;
     }
@@ -186,19 +163,66 @@ class StoreApplication extends JFrame implements ActionListener {
 
     protected JComponent createConversationsPane() {
         JPanel panel = new JPanel();
-        JLabel title = new JLabel("Conversations");
-        panel.setLayout(new GridLayout(1,1));
+        title = new JLabel("Conversations");
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
         panel.add(title);
         return panel;
     }
 
     protected JComponent createDashboardPane() {
         JPanel panel = new JPanel();
-        JLabel title = new JLabel("Dashboard");
-        title.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1,1));
-        panel.add(title);
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        if (isCustomer) {
+            title = new JLabel("All Stores");
+        } else {
+            title = new JLabel("Your Stores");
+        }
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(title, c);
+
+        JTable jTable1 = new JTable();
+        JScrollPane jScrollPane1 = new JScrollPane();
+
+        TableModel tableModel = getTableModel();
+
+        jTable1.setModel(tableModel);
+        jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+
+        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.getViewport().setOpaque(true);
+        jScrollPane1.setViewportBorder(null);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(jScrollPane1, c);
+
         return panel;
+    }
+
+    private static TableModel getTableModel() {
+        String[][] data = {
+                {"Walmart", "Sam Walton"},
+                {"Publix", "George W. Jenkins"},
+                {"Target", "Dayton Hudson"},
+                {"Walgreens", "Walgreen Boosts Alliance, Inc."},
+                {"Amazon", "Jeff Bezos"},
+                {"Aldi", "Die Familie Albrecht"}
+        };
+
+        String[] columnNames = new String[] {"Stores", "Owner"};
+        TableModel tableModel = new DefaultTableModel(data, columnNames) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        return tableModel;
     }
 
     public static void main(String[] args) {
@@ -215,6 +239,11 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == saveButton) {
             JOptionPane.showMessageDialog(null, "Saved", "Message",
                     JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (e.getSource() == clearButton) {
+            usernameSetting.setText("");
+            emailSetting.setText("");
+            passwordSetting.setText("");
         }
     }
 }
