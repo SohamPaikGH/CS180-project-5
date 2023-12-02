@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class Store {
     private String name;            // name of store
@@ -69,5 +70,42 @@ public class Store {
         }
         newStores[newStores.length - 1] = newStore;
         Account.setStores(userID, newStores);
+    }
+
+    /**
+     * Changes a stores name and description to the new ones given
+     * @param ID ID of the store
+     * @param name new name of the store
+     * @param description new description of the store
+     */
+    public static void editStore(String ID, String name, String description) {
+        Store[] stores = Account.getStores(Account.toUserID(ID));
+        for (Store store : stores) {
+            if (store.getID().equals(ID)) {
+                store.name = name;
+                store.description = description;
+                break;
+            }
+        }
+        Account.setStores(Account.toUserID(ID), stores);
+    }
+
+    /**
+     * Deletes the store with the given ID
+     * @param ID ID of the store
+     */
+    public static void deleteStore(String ID) {
+        Store[] stores = Account.getStores(Account.toUserID(ID));
+        ArrayList<Store> storesList = new ArrayList<>();
+        for (Store store : stores) {
+            if (!store.getID().equals(ID)) {
+                storesList.add(store);
+            }
+        }
+        Store[] newStores = new Store[storesList.size()];
+        for (int i = 0; i < newStores.length; i++) {
+            newStores[i] = storesList.get(i);
+        }
+        Account.setStores(Account.toUserID(ID), newStores);
     }
 }
