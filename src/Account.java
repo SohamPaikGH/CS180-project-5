@@ -14,6 +14,8 @@ public class Account {
     private Message[] messages;     // array of messages associated with account
     private String[] blocked;       // array containing ID's of users that this user blocked
     private String[] invisibleTo;   // array containing ID's of users that this user became invisible to
+    private static Object accountsDataSync = new Object();      // object to synchronize writing to accountsData.json
+    private static Object userIDIncrementSync = new Object();   // object to synchronize writing to userIDIncrement.txt
 
     /**
      * Instantiates an account object with given fields
@@ -39,8 +41,6 @@ public class Account {
         this.invisibleTo = invisibleTo;
     }
 
-
-
     /**
      * Creates new account with given fields
      * @param username username
@@ -61,8 +61,10 @@ public class Account {
             e.printStackTrace();
         }
         try (PrintWriter pw = new PrintWriter(new FileOutputStream("userIDIncrement.txt"))) {
-            pw.println(Integer.parseInt(ID) + 2 + "");
-            pw.flush();
+            synchronized (userIDIncrementSync) {
+                pw.println(Integer.parseInt(ID) + 2 + "");
+                pw.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,8 +86,10 @@ public class Account {
         accountsJsonArray.add(newAccount);
 
         try (FileWriter fw = new FileWriter("accountsData.json")) {
-            fw.write(accountsJsonArray.toJSONString());
-            fw.flush();
+            synchronized (accountsDataSync) {
+                fw.write(accountsJsonArray.toJSONString());
+                fw.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -228,8 +232,10 @@ public class Account {
         }
 
         try (FileWriter fw = new FileWriter("accountsData.json")) {
-            fw.write(accountsJsonArray.toJSONString());
-            fw.flush();
+            synchronized (accountsDataSync) {
+                fw.write(accountsJsonArray.toJSONString());
+                fw.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -240,8 +246,10 @@ public class Account {
      */
     public static void resetAccountsData() {
         try (FileWriter fw = new FileWriter("accountsData.json")) {
-            fw.write("[]");
-            fw.flush();
+            synchronized (accountsDataSync) {
+                fw.write("[]");
+                fw.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
