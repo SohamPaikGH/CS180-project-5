@@ -356,7 +356,6 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(textField, c);
 
         sendMessageButton.setPreferredSize(new Dimension(100, 40));
-        sendMessageButton.addActionListener(StoreApplication.this);
         c.gridx = 0;
         c.gridy = 4;
         c.fill = GridBagConstraints.HORIZONTAL;
