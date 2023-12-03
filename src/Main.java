@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 /**
  * Store Application
@@ -20,17 +19,19 @@ class StoreApplication extends JFrame implements ActionListener {
     JPasswordField password;
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
-    JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton;
+    JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton, signUpButton, registerButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
+    JButton deleteAccountButton = new JButton("Delete Account");
     JButton contactStoreButton = new JButton("Contact Store");
     JButton sendMessageButton = new JButton("Send");
-    JList recipientList;
-    ArrayList<JComponent> components;
     boolean loginCompleted = false;
 
     // if true, user is customer; if false, user is seller
     boolean isCustomer = true;
+    // Close sign-up window
+    boolean signUpDone;
+    JFrame signUpFrame;
 
     public StoreApplication() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -57,14 +58,56 @@ class StoreApplication extends JFrame implements ActionListener {
         signInButton.setBounds(300, 320, 100, 40);
         signInButton.addActionListener(StoreApplication.this);
 
+        signUpButton = new JButton("Sign up");
+        signUpButton.setBounds(420, 320, 100, 40);
+        signUpButton.addActionListener(StoreApplication.this);
+
         add(label_username);
         add(username);
         add(label_password);
         add(password);
         add(signInButton);
+        add(signUpButton);
 
         setResizable(false);
         setVisible(true);
+    }
+
+    protected void initializeSignUpPage() {
+        signUpFrame = new JFrame();
+        signUpFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        signUpFrame.setSize(new Dimension(800, 600));
+        signUpFrame.setTitle("Sign Up");
+        signUpFrame.setLocationRelativeTo(null);
+        signUpFrame.setLayout(null);
+
+        label_username = new JLabel("Username");
+        label_username.setBounds(200, 200, 100, 40);
+
+        label_password = new JLabel("Password");
+        label_password.setBounds(200, 250, 100, 40);
+
+        JLabel label_email = new JLabel("Email");
+        label_email.setBounds(200, 250, 100, 40);
+
+        username = new JTextField();
+        username.setBounds(300, 200, 300, 40);
+
+        password = new JPasswordField(50);
+        password.setBounds(300, 250, 300, 40);
+
+        registerButton = new JButton("Register");
+        registerButton.setBounds(300, 320, 100, 40);
+        registerButton.addActionListener(StoreApplication.this);
+
+        signUpFrame.add(label_username);
+        signUpFrame.add(username);
+        signUpFrame.add(label_password);
+        signUpFrame.add(password);
+        signUpFrame.add(registerButton);
+
+        signUpFrame.setVisible(true);
+        signUpFrame.setResizable(false);
     }
 
     protected void initializeApp() {
@@ -160,6 +203,13 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridx = 0;
         c.gridy = 8;
         panel.add(clearButton, c);
+
+        deleteAccountButton.setPreferredSize(new Dimension(100, 40));
+        deleteAccountButton.addActionListener(StoreApplication.this);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 9;
+        panel.add(deleteAccountButton, c);
 
         return panel;
     }
@@ -399,6 +449,14 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == appearInvisibleToRecipientButton) {
             JOptionPane.showMessageDialog(null, "You are now invisible to this recipient", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (e.getSource() == signUpButton) {
+            setVisible(false);
+            EventQueue.invokeLater(this::initializeSignUpPage);
+        }
+        if (e.getSource() == registerButton) {
+            signUpFrame.setVisible(false);
+            setVisible(true);
         }
     }
 }
