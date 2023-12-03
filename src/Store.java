@@ -5,6 +5,7 @@ public class Store {
     private String name;            // name of store
     private String ID;              // ID of store
     private String description;     // description of store
+    private static Object storeIDIncrementSync = new Object();  // object to synchronize writing to storeIDIncrement.txt
 
     /**
      * Instantiates a Store object with the given fields
@@ -56,8 +57,10 @@ public class Store {
             e.printStackTrace();
         }
         try (PrintWriter pw = new PrintWriter(new FileOutputStream("storeIDIncrement.txt"))) {
-            pw.println(Integer.parseInt(storeID) + 2 + "");
-            pw.flush();
+            synchronized (storeIDIncrementSync) {
+                pw.println(Integer.parseInt(storeID) + 2 + "");
+                pw.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
