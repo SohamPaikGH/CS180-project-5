@@ -8,10 +8,12 @@ public class Client {
         try (Socket socket = new Socket("localhost", 4242);
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+
             String line = scanner.nextLine();
             writer.println(line);
             writer.flush();
             System.out.println(reader.readLine());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
