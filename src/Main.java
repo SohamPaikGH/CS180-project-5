@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,9 +20,12 @@ class StoreApplication extends JFrame implements ActionListener {
     JPasswordField password;
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
-    JButton signInButton;
+    JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
+    JButton contactStoreButton = new JButton("Contact Store");
+    JButton sendMessageButton = new JButton("Send");
+    JList recipientList;
     ArrayList<JComponent> components;
     boolean loginCompleted = false;
 
@@ -163,11 +167,86 @@ class StoreApplication extends JFrame implements ActionListener {
 
     protected JComponent createConversationsPane() {
         JPanel panel = new JPanel();
-        title = new JLabel("Conversations");
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        panel.add(title);
+        // Create message area
+
+        JTextArea msgArea = new JTextArea("English", 20, 60);
+        JScrollPane msgScrollPane = new JScrollPane(msgArea);
+        msgArea.setEditable(false);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(msgScrollPane, c);
+
+        // Create sub-panel for dropdown menu that lets user select recipient
+        // Create dropdown menu to select user to message
+        JPanel recipientPanel = new JPanel();
+        recipientPanel.setLayout(new FlowLayout());
+
+        String[] recipientNames = {
+                "Sam Walton",
+                "George W. Jenkins",
+                "Dayton Hudson",
+                "Jeff Bezos"
+        };
+
+        JLabel recipientLbl = new JLabel("Recipient:");
+        recipientLbl.setPreferredSize(new Dimension(100, 40));
+
+        JComboBox recipientSelection = new JComboBox(recipientNames);
+        recipientSelection.setPreferredSize(new Dimension(300, 40));
+        recipientSelection.addActionListener(StoreApplication.this);
+
+        recipientPanel.add(recipientLbl);
+        recipientPanel.add(recipientSelection);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(recipientPanel, c);
+
+        // Create sub-panel for text field and button to send message
+        JPanel messagePanel = new JPanel();
+        messagePanel.setLayout(new FlowLayout());
+
+        JTextField jTextField = new JTextField(50);
+        jTextField.setPreferredSize(new Dimension(300, 40));
+
+        sendMessageButton.setPreferredSize(new Dimension(100, 40));
+        sendMessageButton.addActionListener(StoreApplication.this);
+
+        messagePanel.add(jTextField);
+        messagePanel.add(sendMessageButton);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        panel.add(messagePanel, c);
+
+        // Create sub-panel for blocking and invisibility features
+        // Then add buttons to block and be invisible to users
+        JPanel blockingInvisibilityPanel = new JPanel();
+        blockingInvisibilityPanel.setLayout(new FlowLayout());
+
+        blockRecipientButton = new JButton("Block");
+        blockRecipientButton.setPreferredSize(new Dimension(100, 40));
+        blockRecipientButton.addActionListener(StoreApplication.this);
+
+        appearInvisibleToRecipientButton = new JButton("Toggle Invisibility");
+        appearInvisibleToRecipientButton.setPreferredSize(new Dimension(150, 40));
+        appearInvisibleToRecipientButton.addActionListener(StoreApplication.this);
+
+        blockingInvisibilityPanel.add(blockRecipientButton);
+        blockingInvisibilityPanel.add(appearInvisibleToRecipientButton);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 3;
+        panel.add(blockingInvisibilityPanel, c);
+
         return panel;
     }
 
@@ -188,13 +267,16 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(title, c);
 
         JTable jTable1 = new JTable();
-        JScrollPane jScrollPane1 = new JScrollPane();
 
         TableModel tableModel = getTableModel();
 
         jTable1.setModel(tableModel);
+
+        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox()));
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
+        JScrollPane jScrollPane1 = new JScrollPane();
         jScrollPane1.setViewportView(jTable1);
         jScrollPane1.getViewport().setOpaque(true);
         jScrollPane1.setViewportBorder(null);
@@ -203,17 +285,24 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(jScrollPane1, c);
 
+        contactStoreButton.setPreferredSize(new Dimension(100, 40));
+        contactStoreButton.addActionListener(StoreApplication.this);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        panel.add(contactStoreButton, c);
+
         return panel;
     }
 
     private static TableModel getTableModel() {
         Object[][] data = {
-                {"Walmart", "Sam Walton", null},
-                {"Publix", "George W. Jenkins", null},
-                {"Target", "Dayton Hudson", null},
-                {"Walgreens", "Walgreen Boosts Alliance, Inc.", null},
-                {"Amazon", "Jeff Bezos", null},
-                {"Aldi", "Die Familie Albrecht", null}
+                {"Walmart", "Sam Walton", "Contact Store"},
+                {"Publix", "George W. Jenkins", "Contact Store"},
+                {"Target", "Dayton Hudson", "Contact Store"},
+                {"Walgreens", "Walgreen Boosts Alliance, Inc.", "Contact Store"},
+                {"Amazon", "Jeff Bezos", "Contact Store"},
+                {"Aldi", "Die Familie Albrecht", "Contact Store"}
         };
 
         String[] columnNames = new String[] {"Stores", "Owner", "Actions"};
@@ -225,42 +314,58 @@ class StoreApplication extends JFrame implements ActionListener {
         return tableModel;
     }
 
-//    private void createStoreContactWindow() {
-//        JFrame frame = new JFrame("Contact Store");
-//
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        JPanel panel = new JPanel();
-//        panel.setLayout(new GridBagLayout());
-//        panel.setOpaque(true);
-//
-//        GridBagConstraints c = new GridBagConstraints();
-//
-//        JLabel label1 = new JLabel("Message");
-//        c.gridx = 0;
-//        c.gridy = 0;
-//        c.fill = GridBagConstraints.HORIZONTAL;
-//        panel.add(label1, c);
-//
-//        JTextField textField = new JTextField(20);
-//        c.gridx = 0;
-//        c.gridy = 1;
-//        c.fill = GridBagConstraints.HORIZONTAL;
-//        panel.add(textField, c);
-//
-//        JButton sendButton = new JButton("Send");
-//        sendButton.setPreferredSize(new Dimension(100, 40));
-//        c.gridx = 0;
-//        c.gridy = 2;
-//        c.fill = GridBagConstraints.HORIZONTAL;
-//        panel.add(sendButton, c);
-//
-//        frame.getContentPane().add(BorderLayout.CENTER, panel);
-//    }
+    private void createStoreContactWindow() {
+        JFrame frame = new JFrame("Contact Store");
+        frame.setSize(new Dimension(300, 200));
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setOpaque(true);
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        JLabel label1 = new JLabel("Select Store");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(label1, c);
+
+        String[] stores = {"Walmart", "Publix", "Target", "Walgreens", "Amazon", "Aldi"};
+        JComboBox<String> comboBox = new JComboBox<>(stores);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(comboBox, c);
+
+        JLabel label2 = new JLabel("Message");
+        c.gridx = 0;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(label2, c);
+
+        JTextField textField = new JTextField(20);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(textField, c);
+
+        sendMessageButton.setPreferredSize(new Dimension(100, 40));
+        sendMessageButton.addActionListener(StoreApplication.this);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(sendMessageButton, c);
+
+        frame.getContentPane().add(BorderLayout.CENTER, panel);
+        frame.setVisible(true);
+        frame.setResizable(true);
+    }
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
@@ -269,12 +374,11 @@ class StoreApplication extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == signInButton) {
-//            dispatchEvent(new WindowEvent(StoreApplication.this, WindowEvent.WINDOW_CLOSING));
             setVisible(false);
             EventQueue.invokeLater(this::initializeApp);
         }
         if (e.getSource() == saveButton) {
-            JOptionPane.showMessageDialog(null, "Saved", "Message",
+            JOptionPane.showMessageDialog(null, "Saved", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
         }
         if (e.getSource() == clearButton) {
@@ -282,5 +386,93 @@ class StoreApplication extends JFrame implements ActionListener {
             emailSetting.setText("");
             passwordSetting.setText("");
         }
+        if (e.getSource() == contactStoreButton) {
+            EventQueue.invokeLater(this::createStoreContactWindow);
+        }
+        if (e.getSource() == sendMessageButton) {
+            JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (e.getSource() == blockRecipientButton) {
+            JOptionPane.showMessageDialog(null, "Recipient Blocked!", "Conversations",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (e.getSource() == appearInvisibleToRecipientButton) {
+            JOptionPane.showMessageDialog(null, "You are now invisible to this recipient", "Conversations",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
+}
+
+class ButtonRenderer extends JButton implements TableCellRenderer {
+
+    public ButtonRenderer() {
+        setOpaque(true);
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (isSelected) {
+            setForeground(table.getSelectionForeground());
+            setBackground(table.getSelectionBackground());
+        } else {
+            setForeground(table.getForeground());
+            setBackground(UIManager.getColor("Button.background"));
+        }
+        setText((value==null) ? "":value.toString());
+        return this;
+    }
+}
+
+class ButtonEditor extends DefaultCellEditor {
+    protected JButton btn;
+    private String lbl;
+    private boolean clicked;
+
+    public ButtonEditor(JCheckBox checkBox) {
+        super(checkBox);
+
+        btn = new JButton();
+        btn.setOpaque(true);
+
+        btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireEditingStopped();
+            }
+        });
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        if (isSelected) {
+            btn.setForeground(table.getSelectionForeground());
+            btn.setBackground(table.getSelectionBackground());
+        } else {
+            btn.setForeground(table.getForeground());
+            btn.setBackground(table.getBackground());
+        }
+        lbl = (value==null) ? "": value.toString();
+        btn.setText(lbl);
+        clicked = true;
+
+        return btn;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+
+        if (clicked) {
+            JOptionPane.showMessageDialog(btn, lbl + "Clicked");
+        }
+        clicked = false;
+        return lbl;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        clicked = false;
+        return super.stopCellEditing();
+    }
+
 }
