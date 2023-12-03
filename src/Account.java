@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
 import org.json.simple.*;
@@ -599,5 +598,39 @@ public class Account {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the ID of the user with the email
+     * @param email the email
+     * @return the ID of the user
+     */
+    public static String IDofEmail(String email) {
+        Account[] accounts = readAccountsData();
+        for (Account account : accounts) {
+            if (account.email.equals(email)) {
+                return account.ID;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Deletes account with ID
+     * @param ID the ID of the account
+     */
+    public static void deleteAccount(String ID) {
+        Account[] accounts = readAccountsData();
+        ArrayList<Account> accountsList = new ArrayList<>();
+        for (Account account : accounts) {
+            if (!account.ID.equals(ID)) {
+                accountsList.add(account);
+            }
+        }
+        Account[] newAccounts = new Account[accountsList.size()];
+        for (int i = 0; i < newAccounts.length; i++) {
+            newAccounts[i] = accountsList.get(i);
+        }
+        writeAccountsData(accounts);
     }
 }
