@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
- * Program Name
+ * Store Application
  * <p>
  * Brief description of program
  *
@@ -273,7 +273,7 @@ class StoreApplication extends JFrame implements ActionListener {
         jTable1.setModel(tableModel);
 
         jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox()));
+        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this));
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
         JScrollPane jScrollPane1 = new JScrollPane();
@@ -308,13 +308,13 @@ class StoreApplication extends JFrame implements ActionListener {
         String[] columnNames = new String[] {"Stores", "Owner", "Actions"};
         TableModel tableModel = new DefaultTableModel(data, columnNames) {
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == 2;
             }
         };
         return tableModel;
     }
 
-    private void createStoreContactWindow() {
+    public void createStoreContactWindow() {
         JFrame frame = new JFrame("Contact Store");
         frame.setSize(new Dimension(300, 200));
 
@@ -428,9 +428,12 @@ class ButtonEditor extends DefaultCellEditor {
     protected JButton btn;
     private String lbl;
     private boolean clicked;
+    StoreApplication storeApplication;
 
-    public ButtonEditor(JCheckBox checkBox) {
+    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication) {
         super(checkBox);
+
+        this.storeApplication = storeApplication;
 
         btn = new JButton();
         btn.setOpaque(true);
@@ -463,7 +466,7 @@ class ButtonEditor extends DefaultCellEditor {
     public Object getCellEditorValue() {
 
         if (clicked) {
-            JOptionPane.showMessageDialog(btn, lbl + "Clicked");
+            EventQueue.invokeLater(storeApplication::createStoreContactWindow);
         }
         clicked = false;
         return lbl;
