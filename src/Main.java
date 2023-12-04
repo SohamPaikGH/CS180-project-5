@@ -19,7 +19,8 @@ class StoreApplication extends JFrame implements ActionListener {
     JPasswordField password;
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
-    JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton, signUpButton, registerButton;
+    JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
+            signUpButton, registerButton, storeSendMessageButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
     JButton deleteAccountButton = new JButton("Delete Account");
@@ -405,11 +406,13 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(textField, c);
 
-        sendMessageButton.setPreferredSize(new Dimension(100, 40));
+        storeSendMessageButton = new JButton("Send");
+        storeSendMessageButton.addActionListener(StoreApplication.this);
+        storeSendMessageButton.setPreferredSize(new Dimension(100, 40));
         c.gridx = 0;
         c.gridy = 4;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(sendMessageButton, c);
+        panel.add(storeSendMessageButton, c);
 
         frame.getContentPane().add(BorderLayout.CENTER, panel);
         frame.setVisible(true);
@@ -439,6 +442,10 @@ class StoreApplication extends JFrame implements ActionListener {
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
         if (e.getSource() == sendMessageButton) {
+            JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (e.getSource() == storeSendMessageButton) {
             JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
