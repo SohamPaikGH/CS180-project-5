@@ -134,4 +134,14 @@ public class Store {
     public Account getOwner() {
         return Account.accountWithID(Account.toUserID(ID));
     }
+
+    public static boolean storeNameExists(String ID, String storeName) {
+        Account account = Account.accountWithID(ID);
+        for (Store store : account.getStores()) {
+            if (store.getName().equals(storeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

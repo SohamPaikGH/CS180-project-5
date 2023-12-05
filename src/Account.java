@@ -454,6 +454,34 @@ public class Account {
     }
 
     /**
+     * Removes the given unblockID to the blocked list of the user with the given ID
+     * @param ID the given ID
+     * @param unblockID the given unblockID
+     */
+    public static void unblock(String ID, String unblockID) {
+        Account[] accounts = readAccountsData();
+        Account account = null;
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i].ID.equals(ID)) {
+                account = accounts[i];
+                break;
+            }
+        }
+        ArrayList<String> blockedList = new ArrayList<>();
+        for (String blockedID : account.blocked) {
+            if (!blockedID.equals(unblockID)) {
+                blockedList.add(blockedID);
+            }
+        }
+        String[] newBlocked = new String[blockedList.size()];
+        for (int i = 0; i < newBlocked.length; i++) {
+            newBlocked[i] = blockedList.get(i);
+        }
+        account.blocked = newBlocked;
+        writeAccountsData(accounts);
+    }
+
+    /**
      * Adds the given invisibleID to the blocked list of the user with the given ID
      * @param ID the given ID
      * @param invisibleID the given invisibleID
@@ -472,6 +500,34 @@ public class Account {
             newInvisibleTo[i] = account.invisibleTo[i];
         }
         newInvisibleTo[newInvisibleTo.length - 1] = invisibleID;
+        account.invisibleTo = newInvisibleTo;
+        writeAccountsData(accounts);
+    }
+
+    /**
+     * Removes the given uninvisible to the invisibleTo list of the user with the given ID
+     * @param ID the given ID
+     * @param uninvisibleID the given uninvisibleID
+     */
+    public static void uninvisible(String ID, String uninvisibleID) {
+        Account[] accounts = readAccountsData();
+        Account account = null;
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i].ID.equals(ID)) {
+                account = accounts[i];
+                break;
+            }
+        }
+        ArrayList<String> invisibleToList = new ArrayList<>();
+        for (String invisibleToID : account.invisibleTo) {
+            if (!invisibleToID.equals(uninvisibleID)) {
+                invisibleToList.add(invisibleToID);
+            }
+        }
+        String[] newInvisibleTo = new String[invisibleToList.size()];
+        for (int i = 0; i < newInvisibleTo.length; i++) {
+            newInvisibleTo[i] = invisibleToList.get(i);
+        }
         account.invisibleTo = newInvisibleTo;
         writeAccountsData(accounts);
     }
@@ -632,6 +688,29 @@ public class Account {
             newAccounts[i] = accountsList.get(i);
         }
         writeAccountsData(accounts);
+    }
+
+    /**
+     * Returns an array of usernames from searching searchString from the perspective of the user with ID
+     * @param ID ID of user
+     * @param searchString the String searched for
+     * @return array of usernames
+     */
+    public static String[] searchUsernames(String ID, String searchString) {
+        Account[] accounts = readAccountsData();
+        ArrayList<String> usernamesList = new ArrayList<>();
+        for (Account account : accounts) {
+            if (!(account.ID.equals(ID) || Account.userCantSeeUser(ID, account.ID))) {
+                if (account.username.contains(searchString) && !account.role.equals(Account.getRole(ID))) {
+                    usernamesList.add(account.username);
+                }
+            }
+        }
+        String[] usernames = new String[usernamesList.size()];
+        for (int i = 0; i < usernames.length; i++) {
+            usernames[i] = usernamesList.get(i);
+        }
+        return usernames;
     }
 
     public String getUsername() {
