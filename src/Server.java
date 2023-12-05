@@ -69,7 +69,38 @@ public class Server extends Thread {
             } else if (command.equals("Delete Account")) {
                 String ID = reader.readLine();
                 Account.deleteAccount(ID);
-            }
+            } else if (command.equals("Customer Dashboard")) {
+                Store[] stores = Store.getStores();
+                writer.println("" + stores.length);
+                for (Store store : stores) {
+                    writer.println(store.getName());
+                    writer.println(store.getOwner().getUsername());
+                }
+                writer.flush();
+            } else if (command.equals("Send Message")) {
+                String ID = reader.readLine();
+                String recipientID = Account.IDofUsername(reader.readLine());
+                String message = reader.readLine();
+                if (recipientID == null) {
+                    writer.println("Failure");
+                } else if (Account.userBlockedByUser(ID, recipientID)) {
+                    writer.println("Blocked");
+                } else {
+                    Message.createMessage(ID, recipientID, message);
+                    writer.println("Success");
+                }
+                writer.flush();
+            } else if (command.equals("Conversation")) {
+                String ID = reader.readLine();
+                String recipientID = Account.IDofUsername(reader.readLine());
+                Message[] messages = Message.getConversationArray(ID, recipientID);
+                writer.println(messages.length);
+                for (Message message : messages) {
+                    writer.println(Account.getUsername(message.getSenderID()));
+                    writer.println(message.getMessage());
+                }
+                writer.flush();
+            } 
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -111,4 +111,27 @@ public class Store {
         }
         Account.setStores(Account.toUserID(ID), newStores);
     }
+
+    /**
+     * Returns an array of all the stores
+     * @return an array of all the stores
+     */
+    public static Store[] getStores() {
+        Account[] accounts = Account.readAccountsData();
+        ArrayList<Store> storesList = new ArrayList<>();
+        for (Account account : accounts) {
+            for (Store store : account.getStores()) {
+                storesList.add(store);
+            }
+        }
+        Store[] stores = new Store[storesList.size()];
+        for (int i = 0; i < stores.length; i++) {
+            stores[i] = storesList.get(i);
+        }
+        return stores;
+    }
+
+    public Account getOwner() {
+        return Account.accountWithID(Account.toUserID(ID));
+    }
 }

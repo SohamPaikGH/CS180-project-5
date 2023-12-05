@@ -633,4 +633,40 @@ public class Account {
         }
         writeAccountsData(accounts);
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public Store[] getStores() {
+        return stores;
+    }
+
+    public Message[] getMessages() {
+        return messages;
+    }
+
+    public String[] getBlocked() {
+        return blocked;
+    }
+
+    public String[] getInvisibleTo() {
+        return invisibleTo;
+    }
 }
