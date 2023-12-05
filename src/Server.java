@@ -1,6 +1,9 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server extends Thread {
     private Socket socket;
@@ -15,7 +18,9 @@ public class Server extends Thread {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             String line = reader.readLine();
-            writer.println(line.toLowerCase());
+            line += '\n' + reader.readLine();
+            System.out.println(line);
+//            writer.println(line.toLowerCase());
             writer.flush();
             socket.close();
         } catch (IOException e) {
