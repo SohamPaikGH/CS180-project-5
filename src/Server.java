@@ -158,9 +158,30 @@ public class Server extends Thread {
                         Store.editStore(store.getID(), newStoreName, newStoreDescription);
                         writer.println("Success");
                     } else if (Store.storeNameExists(ID, newStoreName)) {
-                        writer.println("Failure");
+                        writer.println("Name Exists");
+                    } else if (newStoreName.isEmpty()) {
+                        writer.println("Name Blank");
                     } else {
                         Store.editStore(store.getID(), newStoreName, newStoreDescription);
+                        writer.println("Success");
+                    }
+                    writer.flush();
+                } else if (command.equals("Delete Store")) {
+                    String ID = reader.readLine();
+                    String buttonIndex = reader.readLine();
+                    Store[] stores = Account.getStores(ID);
+                    Store store = stores[Integer.parseInt(buttonIndex)];
+                    Store.deleteStore(store.getID());
+                } else if (command.equals("Create Store")) {
+                    String ID = reader.readLine();
+                    String newStoreName = reader.readLine();
+                    String newStoreDescription = reader.readLine();
+                    if (Store.storeNameExists(ID, newStoreName)) {
+                        writer.println("Name Exists");
+                    } else if (newStoreName.isEmpty()) {
+                        writer.println("Name Blank");
+                    } else {
+                        Store.createStore(ID, newStoreName, newStoreDescription);
                         writer.println("Success");
                     }
                     writer.flush();
