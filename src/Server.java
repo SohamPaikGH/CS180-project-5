@@ -1,6 +1,9 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server extends Thread {
     private Socket socket;
@@ -14,6 +17,7 @@ public class Server extends Thread {
     public void run() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+
             String command = reader.readLine();
             if (command.equals("Log In")) {
                 String username = reader.readLine();
@@ -70,6 +74,7 @@ public class Server extends Thread {
                 String ID = reader.readLine();
                 Account.deleteAccount(ID);
             }
+          
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

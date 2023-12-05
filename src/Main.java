@@ -6,14 +6,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ConnectException;
+import java.net.Socket;
 
 /**
  * Store Application
  * <p>
- * Brief description of program
+ * This file initializes the store application client and the GUI. All calls to the
+ * server from the client are made by the StoreApplication object.
  *
  * @author Soham Paik, CS 180 Black
- * @version Date of Completion
+ * @version TBD
  */
 class StoreApplication extends JFrame implements ActionListener {
     JPasswordField password;
@@ -26,6 +33,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JButton deleteAccountButton = new JButton("Delete Account");
     JButton contactStoreButton = new JButton("Contact Store");
     JButton sendMessageButton = new JButton("Send");
+    JComboBox roleSetting;
     boolean loginCompleted = false;
 
     // if true, user is customer; if false, user is seller
@@ -33,6 +41,11 @@ class StoreApplication extends JFrame implements ActionListener {
     // Close sign-up window
     boolean signUpDone;
     JFrame signUpFrame;
+    // For networking purposes
+    Socket socket;
+    BufferedReader reader;
+    PrintWriter writer;
+
 
     public StoreApplication() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -89,7 +102,10 @@ class StoreApplication extends JFrame implements ActionListener {
         label_password.setBounds(200, 250, 100, 40);
 
         JLabel label_email = new JLabel("Email");
-        label_email.setBounds(200, 250, 100, 40);
+        label_email.setBounds(200, 300, 100, 40);
+
+        JLabel label_role = new JLabel("Role");
+        label_role.setBounds(200, 350, 100, 40);
 
         username = new JTextField();
         username.setBounds(300, 200, 300, 40);
@@ -97,14 +113,25 @@ class StoreApplication extends JFrame implements ActionListener {
         password = new JPasswordField(50);
         password.setBounds(300, 250, 300, 40);
 
+        emailSetting = new JTextField();
+        emailSetting.setBounds(300, 300, 300, 40);
+
+        String options[] = {"Customer", "Seller"};
+        roleSetting = new JComboBox(options);
+        roleSetting.setBounds(300, 350, 300, 40);
+
         registerButton = new JButton("Register");
-        registerButton.setBounds(300, 320, 100, 40);
+        registerButton.setBounds(300, 400, 100, 40);
         registerButton.addActionListener(StoreApplication.this);
 
         signUpFrame.add(label_username);
         signUpFrame.add(username);
         signUpFrame.add(label_password);
         signUpFrame.add(password);
+        signUpFrame.add(label_email);
+        signUpFrame.add(emailSetting);
+        signUpFrame.add(label_role);
+        signUpFrame.add(roleSetting);
         signUpFrame.add(registerButton);
 
         signUpFrame.setVisible(true);
@@ -426,8 +453,28 @@ class StoreApplication extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == signInButton) {
-            setVisible(false);
-            EventQueue.invokeLater(this::initializeApp);
+
+            try {
+                socket = new Socket("localhost", 4242);
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                writer = new PrintWriter(socket.getOutputStream());
+
+                writer.println("Sign In");
+                writer.println(username.getText());
+                writer.println(password.getPassword());
+                writer.println();
+                writer.flush();
+
+                setVisible(false);
+                EventQueue.invokeLater(this::initializeApp);
+
+            } catch (ConnectException connectException) {
+                JOptionPane.showMessageDialog(null, "Server not found!", "Error!",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+
         }
         if (e.getSource() == saveButton) {
             JOptionPane.showMessageDialog(null, "Saved", "Account Settings",
@@ -442,10 +489,17 @@ class StoreApplication extends JFrame implements ActionListener {
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
         if (e.getSource() == sendMessageButton) {
+            writer.write("Message");
+            writer.println();
+            writer.flush();
             JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
         if (e.getSource() == storeSendMessageButton) {
+            writer.write("Message");
+            writer.println();
+            writer.flush();
+
             JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
