@@ -28,6 +28,7 @@ public class Server extends Thread {
                     } else {
                         writer.println("Success");
                         writer.println(ID);
+                        writer.println(Account.getRole(ID));
                     }
                     writer.flush();
                 } else if (command.equals("Sign up")) {
@@ -44,7 +45,6 @@ public class Server extends Thread {
                     } else {
                         Account.createAccount(username, email, password, role);
                         writer.println("Success");
-                        writer.println(Account.IDofUsername(username));
                     }
                     writer.flush();
                 } else if (command.equals("Account Data")) {
@@ -81,7 +81,16 @@ public class Server extends Thread {
                         writer.println(store.getOwner().getUsername());
                     }
                     writer.flush();
-                } else if (command.equals("Send Message")) {
+                } else if (command.equals("Seller Dashboard")) {
+                    String ID = reader.readLine();
+                    Store[] stores = Account.getStores(ID);
+                    writer.println("" + stores.length);
+                    for (Store store : stores) {
+                        writer.println(store.getName());
+                        writer.println(store.getDescription());
+                    }
+                    writer.flush();
+                } else if (command.equals("Send User Message")) {
                     String ID = reader.readLine();
                     String recipientID = Account.IDofUsername(reader.readLine());
                     String message = reader.readLine();
@@ -94,6 +103,33 @@ public class Server extends Thread {
                         writer.println("Success");
                     }
                     writer.flush();
+                } else if (command.equals("Send Store Message")) {
+                    String ID = reader.readLine();
+                    String recipientID = Account.IDofStorename(reader.readLine());
+                    String message = reader.readLine();
+                    if (recipientID == null) {
+                        writer.println("Failure");
+                    } else if (Account.userBlockedByUser(ID, Account.toUserID(recipientID))) {
+                        writer.println("Blocked");
+                    } else {
+                        Message.createMessage(ID, recipientID, message);
+                        writer.println("Success");
+                    }
+                    writer.flush();
+                } else if (command.equals("Send Message As Store")) {
+                    String ID = reader.readLine();
+                    String storeID = Account.IDofStorename(reader.readLine());
+                    String recipientID = Account.IDofUsername(reader.readLine());
+                    String message = reader.readLine();
+                    if (recipientID == null) {
+                        writer.println("Failure");
+                    } else if (Account.userBlockedByUser(ID, recipientID)) {
+                        writer.println("Blocked");
+                    } else {
+                        Message.createMessage(storeID, recipientID, message);
+                        writer.println("Success");
+                    }
+                    writer.flush();
                 } else if (command.equals("Conversation")) {
                     String ID = reader.readLine();
                     String recipientID = Account.IDofUsername(reader.readLine());
@@ -102,6 +138,77 @@ public class Server extends Thread {
                     for (Message message : messages) {
                         writer.println(Account.getUsername(message.getSenderID()));
                         writer.println(message.getMessage());
+                    }
+                    writer.flush();
+                } else if (command.equals("Toggle Block")) {
+                    String ID = reader.readLine();
+                    String blockID = reader.readLine();
+                    if (Account.userBlockedByUser(blockID, ID)) {
+                        Account.unblock(ID, blockID);
+                    } else {
+                        Account.block(ID, blockID);
+                    }
+                } else if (command.equals("Toggle Invisible")) {
+                    String ID = reader.readLine();
+                    String invisibleID = reader.readLine();
+                    if (Account.userCantSeeUser(invisibleID, ID)) {
+                        Account.unblock(ID, invisibleID);
+                    } else {
+                        Account.block(ID, invisibleID);
+                    }
+                } else if (command.equals("Search Users")) {
+                    String ID = reader.readLine();
+                    String searchString = reader.readLine();
+                    String[] usernames = Account.searchUsernames(ID, searchString);
+                    writer.println("" + usernames.length);
+                    for (String username : usernames) {
+                        writer.println(username);
+                    }
+                    writer.flush();
+                } else if (command.equals("List Users")) {
+                    String ID = reader.readLine();
+                    String[] usernames = Account.searchUsernames(ID, "");
+                    writer.println("" + usernames.length);
+                    for (String username : usernames) {
+                        writer.println(username);
+                    }
+                    writer.flush();
+                } else if (command.equals("Save Store Data")) {
+                    String ID = reader.readLine();
+                    String buttonIndex = reader.readLine();
+                    String newStoreName = reader.readLine();
+                    String newStoreDescription = reader.readLine();
+                    Store[] stores = Account.getStores(ID);
+                    Store store = stores[Integer.parseInt(buttonIndex)];
+                    if (newStoreName.equals(store.getName())) {
+                        Store.editStore(store.getID(), newStoreName, newStoreDescription);
+                        writer.println("Success");
+                    } else if (Store.storeNameExists(newStoreName)) {
+                        writer.println("Name Exists");
+                    } else if (newStoreName.isEmpty()) {
+                        writer.println("Name Blank");
+                    } else {
+                        Store.editStore(store.getID(), newStoreName, newStoreDescription);
+                        writer.println("Success");
+                    }
+                    writer.flush();
+                } else if (command.equals("Delete Store")) {
+                    String ID = reader.readLine();
+                    String buttonIndex = reader.readLine();
+                    Store[] stores = Account.getStores(ID);
+                    Store store = stores[Integer.parseInt(buttonIndex)];
+                    Store.deleteStore(store.getID());
+                } else if (command.equals("Create Store")) {
+                    String ID = reader.readLine();
+                    String newStoreName = reader.readLine();
+                    String newStoreDescription = reader.readLine();
+                    if (Store.storeNameExists(newStoreName)) {
+                        writer.println("Name Exists");
+                    } else if (newStoreName.isEmpty()) {
+                        writer.println("Name Blank");
+                    } else {
+                        Store.createStore(ID, newStoreName, newStoreDescription);
+                        writer.println("Success");
                     }
                     writer.flush();
                 }
