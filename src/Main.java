@@ -185,19 +185,20 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-//        writer.println("Account Data");
-//        writer.flush();
-//
-//        String accountUsername;
-//        String accountEmail;
-//        String accountPassword;
-//        try {
-//            accountUsername = reader.readLine();
-//            accountEmail = reader.readLine();
-//            accountPassword = reader.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        writer.println("Account Data");
+        writer.println(ID);
+        writer.flush();
+
+        String accountUsername;
+        String accountEmail;
+        String accountPassword;
+        try {
+            accountUsername = reader.readLine();
+            accountEmail = reader.readLine();
+            accountPassword = reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         JLabel usernameLbl = new JLabel("Username");
         usernameLbl.setPreferredSize(new Dimension(100, 40));
@@ -207,7 +208,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(usernameLbl, c);
 
         usernameSetting = new JTextField(20);
-//        usernameSetting.setText(accountUsername);
+        usernameSetting.setText(accountUsername);
         usernameSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -222,7 +223,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(emailLbl, c);
 
         emailSetting = new JTextField(20);
-//        emailSetting.setText(accountEmail);
+        emailSetting.setText(accountEmail);
         emailSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -237,7 +238,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(passwordLbl, c);
 
         passwordSetting = new JTextField(20);
-//        passwordSetting.setText(accountPassword);
+        passwordSetting.setText(accountPassword);
         passwordSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -476,6 +477,14 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
+        Account.resetAccountsData();
+        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
+        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
+        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
+        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
+        Store.createStore("2", "Store1", "Seller1's store");    // ID = 1
+        Store.createStore("4", "Store2", "Seller2's store");    // ID = 3
+        Store.createStore("6", "Store3", "Seller3's store");    // ID = 5
     }
 
     @Override
@@ -493,7 +502,6 @@ class StoreApplication extends JFrame implements ActionListener {
                 writer.println("Log In");
                 writer.println(username.getText());
                 writer.println(password.getPassword());
-                writer.println();
                 writer.flush();
 
 
@@ -575,8 +583,6 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 String line = reader.readLine();
                 if (line.equals("Success")) {
-                    ID = reader.readLine();
-                    System.out.println(ID);
                     signUpFrame.setVisible(false);
                     setVisible(true);
                 } else if (line.equals("Blank")) {
