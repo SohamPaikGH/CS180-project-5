@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -181,6 +183,46 @@ class StoreApplication extends JFrame implements ActionListener {
         frame.getContentPane().add(tabbedPane);
         frame.setVisible(true);
         frame.setResizable(true);
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+
+                int tabIndex = tabbedPane.getSelectedIndex();
+
+                if (tabIndex == 0) {
+                    writer.println("Customer Dashboard");
+                    writer.flush();
+
+                }
+
+
+                if (tabIndex == 2) {
+
+                    writer.println("Account Data");
+                    writer.println(ID);
+                    writer.flush();
+
+                    String accountUsername;
+                    String accountEmail;
+                    String accountPassword;
+                    try {
+                        accountUsername = reader.readLine();
+                        accountEmail = reader.readLine();
+                        accountPassword = reader.readLine();
+
+                        usernameSetting.setText(accountUsername);
+                        emailSetting.setText(accountEmail);
+                        passwordSetting.setText(accountPassword);
+
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+
+                }
+
+            }
+        });
 
     }
 
@@ -408,7 +450,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
-    private static TableModel getTableModel() {
+    private TableModel getTableModel() {
         Object[][] data = {
                 {"Walmart", "Sam Walton", "Contact Store"},
                 {"Publix", "George W. Jenkins", "Contact Store"},
@@ -549,6 +591,13 @@ class StoreApplication extends JFrame implements ActionListener {
                 if (line.equals("Success")) {
                     ID = reader.readLine();
                     role = reader.readLine();
+
+                    if ( role.equals("Customer") ) {
+                        isCustomer = true;
+                    } else {
+                        isCustomer = false;
+                    }
+
                     setVisible(false);
                     EventQueue.invokeLater(this::initializeApp);
                 } else {
@@ -671,6 +720,7 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == deleteAccountButton) {
             writer.println("Delete Account");
             writer.println(ID);
+            writer.flush();
             JOptionPane.showMessageDialog(null, "Account Deleted!", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
         }
