@@ -44,6 +44,7 @@ class StoreApplication extends JFrame implements ActionListener {
     BufferedReader reader;
     PrintWriter writer;
     String ID;
+    String role;
 
 
     public StoreApplication() {
@@ -52,6 +53,16 @@ class StoreApplication extends JFrame implements ActionListener {
         setTitle("Login");
         setLocationRelativeTo(null);
         setLayout(null);
+
+        // Establish connection
+        try {
+            socket = new Socket("localhost", 4242);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new PrintWriter(socket.getOutputStream());
+            connectedToServer = true;
+        } catch (IOException e) {
+            System.out.println("Connection not found!");
+        }
 
         // Start login page
 
@@ -174,6 +185,19 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+//        writer.println("Account Data");
+//        writer.flush();
+//
+//        String accountUsername;
+//        String accountEmail;
+//        String accountPassword;
+//        try {
+//            accountUsername = reader.readLine();
+//            accountEmail = reader.readLine();
+//            accountPassword = reader.readLine();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         JLabel usernameLbl = new JLabel("Username");
         usernameLbl.setPreferredSize(new Dimension(100, 40));
@@ -183,6 +207,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(usernameLbl, c);
 
         usernameSetting = new JTextField(20);
+//        usernameSetting.setText(accountUsername);
         usernameSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -197,6 +222,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(emailLbl, c);
 
         emailSetting = new JTextField(20);
+//        emailSetting.setText(accountEmail);
         emailSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -211,6 +237,7 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(passwordLbl, c);
 
         passwordSetting = new JTextField(20);
+//        passwordSetting.setText(accountPassword);
         passwordSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -456,9 +483,12 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == signInButton) {
 
             try {
-                socket = new Socket("localhost", 4242);
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                writer = new PrintWriter(socket.getOutputStream());
+                if (!connectedToServer || !socket.isConnected()) {
+                    socket = new Socket("localhost", 4242);
+                    reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    writer = new PrintWriter(socket.getOutputStream());
+                    connectedToServer = true;
+                }
 
                 writer.println("Log In");
                 writer.println(username.getText());
@@ -466,15 +496,16 @@ class StoreApplication extends JFrame implements ActionListener {
                 writer.println();
                 writer.flush();
 
-                connectedToServer = true;
 
                 String line = reader.readLine();
                 if (line.equals("Success")) {
                     ID = reader.readLine();
+                    role = reader.readLine();
                     setVisible(false);
                     EventQueue.invokeLater(this::initializeApp);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid ID. Please try again.", "Error!",
+                    JOptionPane.showMessageDialog(null, "Please check your username and password " +
+                                    "before trying again.", "Error!",
                             JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -526,8 +557,45 @@ class StoreApplication extends JFrame implements ActionListener {
             EventQueue.invokeLater(this::initializeSignUpPage);
         }
         if (e.getSource() == registerButton) {
-            signUpFrame.setVisible(false);
-            setVisible(true);
+
+            try {
+                if (!connectedToServer) {
+                    socket = new Socket("localhost", 4242);
+                    reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    writer = new PrintWriter(socket.getOutputStream());
+                    connectedToServer = true;
+                }
+
+                writer.println("Sign up");
+                writer.println(username.getText());
+                writer.println(emailSetting.getText());
+                writer.println(password.getPassword());
+                writer.println(String.valueOf(roleSetting.getSelectedItem()));
+                writer.flush();
+
+                String line = reader.readLine();
+                if (line.equals("Success")) {
+                    ID = reader.readLine();
+                    System.out.println(ID);
+                    signUpFrame.setVisible(false);
+                    setVisible(true);
+                } else if (line.equals("Blank")) {
+                    JOptionPane.showMessageDialog(null, "At least one of your fields is blank. Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (line.equals("Username Taken")) {
+                    JOptionPane.showMessageDialog(null, "That username is taken! Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (line.equals("Email Taken")) {
+                    JOptionPane.showMessageDialog(null, "That email is taken! Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please check the fields and try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
         }
     }
 }
