@@ -6,7 +6,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
@@ -185,20 +188,6 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-//        writer.println("Account Data");
-//        writer.flush();
-//
-//        String accountUsername;
-//        String accountEmail;
-//        String accountPassword;
-//        try {
-//            accountUsername = reader.readLine();
-//            accountEmail = reader.readLine();
-//            accountPassword = reader.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
         JLabel usernameLbl = new JLabel("Username");
         usernameLbl.setPreferredSize(new Dimension(100, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -207,7 +196,6 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(usernameLbl, c);
 
         usernameSetting = new JTextField(20);
-//        usernameSetting.setText(accountUsername);
         usernameSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -222,7 +210,6 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(emailLbl, c);
 
         emailSetting = new JTextField(20);
-//        emailSetting.setText(accountEmail);
         emailSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -237,7 +224,6 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.add(passwordLbl, c);
 
         passwordSetting = new JTextField(20);
-//        passwordSetting.setText(accountPassword);
         passwordSetting.setPreferredSize(new Dimension(300, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
