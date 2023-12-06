@@ -27,6 +27,7 @@ public class Server extends Thread {
                         writer.println("Failure");
                     } else {
                         writer.println("Success");
+                        System.out.println("Success");
                         writer.println(ID);
                         writer.println(Account.getRole(ID));
                     }
