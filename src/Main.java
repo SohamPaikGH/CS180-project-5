@@ -403,20 +403,52 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
-    private static TableModel getTableModel() {
-        Object[][] data = {
-                {"Walmart", "Sam Walton", "Contact Store"},
-                {"Publix", "George W. Jenkins", "Contact Store"},
-                {"Target", "Dayton Hudson", "Contact Store"},
-                {"Walgreens", "Walgreen Boosts Alliance, Inc.", "Contact Store"},
-                {"Amazon", "Jeff Bezos", "Contact Store"},
-                {"Aldi", "Die Familie Albrecht", "Contact Store"}
-        };
+    private TableModel getTableModel() {
+        String[] columnNames;
+        Object[][] data = null;
+        if (role.equals("Customer")) {
+            columnNames = new String[] {"Stores", "Owner", "Actions"};
+            writer.println("Customer Dashboard");
+            writer.flush();
+            try {
+                int storeCount = Integer.parseInt(reader.readLine());
+                data = new Object[storeCount][];
+                for (int i = 0; i < storeCount; i++) {
+                    data[i] = new Object[3];
+                    data[i][0] = reader.readLine();
+                    data[i][1] = reader.readLine();
+                    data[i][2] = "Contact Store";
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            columnNames = new String[] {"Stores", "Descriptions", "Actions", "Actions"};
+            writer.println("Seller Dashboard");
+            writer.println(ID);
+            writer.flush();
+            try {
+                int storeCount = Integer.parseInt(reader.readLine());
+                data = new Object[storeCount][];
+                for (int i = 0; i < storeCount; i++) {
+                    data[i] = new Object[4];
+                    data[i][0] = reader.readLine();
+                    data[i][1] = reader.readLine();
+                    data[i][2] = "Save Data";
+                    data[i][3] = "Delete Store";
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-        String[] columnNames = new String[] {"Stores", "Owner", "Actions"};
         TableModel tableModel = new DefaultTableModel(data, columnNames) {
             public boolean isCellEditable(int row, int column) {
-                return column == 2;
+                if (role.equals("Customer")) {
+                    return column == 2;
+                } else {
+                    return true;
+                }
             }
         };
         return tableModel;
@@ -485,9 +517,11 @@ class StoreApplication extends JFrame implements ActionListener {
         Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
         Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
         Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-        Store.createStore("2", "Store1", "Seller1's store");    // ID = 1
-        Store.createStore("4", "Store2", "Seller2's store");    // ID = 3
-        Store.createStore("6", "Store3", "Seller3's store");    // ID = 5
+        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
+        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
+        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
+        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
+        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
     }
 
     @Override
@@ -630,6 +664,7 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == deleteAccountButton) {
             writer.println("Delete Account");
             writer.println(ID);
+            writer.flush();
             JOptionPane.showMessageDialog(null, "Account Deleted!", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
         }
