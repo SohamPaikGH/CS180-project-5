@@ -91,7 +91,7 @@ public class Server extends Thread {
                         writer.println(store.getDescription());
                     }
                     writer.flush();
-                } else if (command.equals("Send Message")) {
+                } else if (command.equals("Send User Message")) {
                     String ID = reader.readLine();
                     String recipientID = Account.IDofUsername(reader.readLine());
                     String message = reader.readLine();
@@ -101,6 +101,33 @@ public class Server extends Thread {
                         writer.println("Blocked");
                     } else {
                         Message.createMessage(ID, recipientID, message);
+                        writer.println("Success");
+                    }
+                    writer.flush();
+                } else if (command.equals("Send Store Message")) {
+                    String ID = reader.readLine();
+                    String recipientID = Account.IDofStorename(reader.readLine());
+                    String message = reader.readLine();
+                    if (recipientID == null) {
+                        writer.println("Failure");
+                    } else if (Account.userBlockedByUser(ID, Account.toUserID(recipientID))) {
+                        writer.println("Blocked");
+                    } else {
+                        Message.createMessage(ID, recipientID, message);
+                        writer.println("Success");
+                    }
+                    writer.flush();
+                } else if (command.equals("Send Message As Store")) {
+                    String ID = reader.readLine();
+                    String storeID = Account.IDofStorename(reader.readLine());
+                    String recipientID = Account.IDofUsername(reader.readLine());
+                    String message = reader.readLine();
+                    if (recipientID == null) {
+                        writer.println("Failure");
+                    } else if (Account.userBlockedByUser(ID, recipientID)) {
+                        writer.println("Blocked");
+                    } else {
+                        Message.createMessage(storeID, recipientID, message);
                         writer.println("Success");
                     }
                     writer.flush();
@@ -157,7 +184,7 @@ public class Server extends Thread {
                     if (newStoreName.equals(store.getName())) {
                         Store.editStore(store.getID(), newStoreName, newStoreDescription);
                         writer.println("Success");
-                    } else if (Store.storeNameExists(ID, newStoreName)) {
+                    } else if (Store.storeNameExists(newStoreName)) {
                         writer.println("Name Exists");
                     } else if (newStoreName.isEmpty()) {
                         writer.println("Name Blank");
@@ -176,7 +203,7 @@ public class Server extends Thread {
                     String ID = reader.readLine();
                     String newStoreName = reader.readLine();
                     String newStoreDescription = reader.readLine();
-                    if (Store.storeNameExists(ID, newStoreName)) {
+                    if (Store.storeNameExists(newStoreName)) {
                         writer.println("Name Exists");
                     } else if (newStoreName.isEmpty()) {
                         writer.println("Name Blank");
