@@ -604,7 +604,12 @@ class StoreApplication extends JFrame implements ActionListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-
+        }
+        if (e.getSource() == deleteAccountButton) {
+            writer.println("Delete Account");
+            writer.println(ID);
+            JOptionPane.showMessageDialog(null, "Account Deleted!", "Account Settings",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
