@@ -27,7 +27,9 @@ public class Server extends Thread {
                         writer.println("Failure");
                     } else {
                         writer.println("Success");
+                        System.out.println("Success");
                         writer.println(ID);
+                        System.out.println(ID);
                     }
                     writer.flush();
                 } else if (command.equals("Sign up")) {

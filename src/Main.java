@@ -6,10 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 
@@ -35,9 +32,10 @@ class StoreApplication extends JFrame implements ActionListener {
     JButton sendMessageButton = new JButton("Send");
     JComboBox roleSetting;
     boolean loginCompleted = false;
+    boolean connectedToServer = false;
 
     // if true, user is customer; if false, user is seller
-    boolean isCustomer = true;
+    boolean isCustomer = false;
     // Close sign-up window
     boolean signUpDone;
     JFrame signUpFrame;
@@ -45,6 +43,7 @@ class StoreApplication extends JFrame implements ActionListener {
     Socket socket;
     BufferedReader reader;
     PrintWriter writer;
+    String ID;
 
 
     public StoreApplication() {
@@ -446,6 +445,8 @@ class StoreApplication extends JFrame implements ActionListener {
         frame.setResizable(true);
     }
 
+
+
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
     }
@@ -459,14 +460,23 @@ class StoreApplication extends JFrame implements ActionListener {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 writer = new PrintWriter(socket.getOutputStream());
 
-                writer.println("Sign In");
+                writer.println("Log In");
                 writer.println(username.getText());
                 writer.println(password.getPassword());
                 writer.println();
                 writer.flush();
 
-                setVisible(false);
-                EventQueue.invokeLater(this::initializeApp);
+                connectedToServer = true;
+
+                String line = reader.readLine();
+                if (line.equals("Success")) {
+                    ID = reader.readLine();
+                    setVisible(false);
+                    EventQueue.invokeLater(this::initializeApp);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid ID. Please try again.", "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                }
 
             } catch (ConnectException connectException) {
                 JOptionPane.showMessageDialog(null, "Server not found!", "Error!",
