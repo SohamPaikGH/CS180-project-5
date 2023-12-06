@@ -27,12 +27,13 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
     JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
-            signUpButton, registerButton, storeSendMessageButton;
+            signUpButton, registerButton, storeSendMessageButton, searchButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
     JButton deleteAccountButton = new JButton("Delete Account");
     JButton contactStoreButton = new JButton("Contact Store");
     JButton sendMessageButton = new JButton("Send");
+    JButton searchUserButton = new JButton("SearchUser");
     JComboBox roleSetting;
     boolean loginCompleted = false;
     boolean connectedToServer = false;
@@ -298,7 +299,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 "Sam Walton",
                 "George W. Jenkins",
                 "Dayton Hudson",
-                "Jeff Bezos"
+                "Jeff Bezos",
         };
 
         JLabel recipientLbl = new JLabel("Recipient:");
@@ -310,6 +311,9 @@ class StoreApplication extends JFrame implements ActionListener {
 
         recipientPanel.add(recipientLbl);
         recipientPanel.add(recipientSelection);
+        searchUserButton.setPreferredSize(new Dimension(200, 40));
+        searchUserButton.addActionListener(StoreApplication.this);
+        recipientPanel.add(searchUserButton);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -398,6 +402,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
+
         panel.add(contactStoreButton, c);
 
         return panel;
@@ -421,7 +426,39 @@ class StoreApplication extends JFrame implements ActionListener {
         };
         return tableModel;
     }
+    public void createSearchUserWindow() {
+        JFrame frame2 = new JFrame("Search User");
+        frame2.setSize(new Dimension(300, 200));
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setOpaque(true);
+
+        GridBagConstraints c = new GridBagConstraints();
+        String[] recipientNames = {
+                "Sam Walton",
+                "George W. Jenkins",
+                "Dayton Hudson",
+                "Jeff Bezos",
+                "Walgreen Boosts Alliance, Inc",
+                "Die Familie Albrecht"
+        };
+        JComboBox<String> comboBox = new JComboBox<>(recipientNames);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(comboBox, c);
+
+        frame2.getContentPane().add(BorderLayout.CENTER, panel);
+        frame2.setVisible(true);
+        frame2.setResizable(true);
+    }
     public void createStoreContactWindow() {
         JFrame frame = new JFrame("Contact Store");
         frame.setSize(new Dimension(300, 200));
@@ -563,6 +600,10 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == contactStoreButton) {
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
+
+        if (e.getSource() == searchUserButton) {
+            EventQueue.invokeLater(this::createSearchUserWindow );
+        }
         if (e.getSource() == sendMessageButton) {
             writer.write("Message");
             writer.println();
@@ -699,6 +740,16 @@ class ButtonEditor extends DefaultCellEditor {
 
         if (clicked) {
             EventQueue.invokeLater(storeApplication::createStoreContactWindow);
+
+        }
+        clicked = false;
+        return lbl;
+    }
+    public Object getCellEditorValue2() {
+
+        if (clicked) {
+            EventQueue.invokeLater(storeApplication::createSearchUserWindow);
+
         }
         clicked = false;
         return lbl;
