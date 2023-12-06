@@ -45,7 +45,6 @@ public class Server extends Thread {
                     } else {
                         Account.createAccount(username, email, password, role);
                         writer.println("Success");
-                        writer.println(Account.IDofUsername(username));
                     }
                     writer.flush();
                 } else if (command.equals("Account Data")) {

@@ -526,8 +526,31 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == saveButton) {
-            JOptionPane.showMessageDialog(null, "Saved", "Account Settings",
-                    JOptionPane.INFORMATION_MESSAGE);
+            writer.println("Save Account Data");
+            writer.println(ID);
+            writer.println(usernameSetting.getText());
+            writer.println(emailSetting.getText());
+            writer.println(passwordSetting.getText());
+            writer.flush();
+            String line = null;
+            try {
+                line = reader.readLine();
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
+            if (line.equals("Success")) {
+                JOptionPane.showMessageDialog(null, "Saved.",
+                        "Account Data", JOptionPane.INFORMATION_MESSAGE);
+            } else if (line.equals("Blank")) {
+                JOptionPane.showMessageDialog(null, "At least one of your fields is blank. Please try again.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (line.equals("Username Taken")) {
+                JOptionPane.showMessageDialog(null, "That username is taken! Please try again.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (line.equals("Email Taken")) {
+                JOptionPane.showMessageDialog(null, "That email is taken! Please try again.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
         if (e.getSource() == clearButton) {
             usernameSetting.setText("");
@@ -583,6 +606,8 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 String line = reader.readLine();
                 if (line.equals("Success")) {
+                    JOptionPane.showMessageDialog(null, "Account created.",
+                            "Sign Up", JOptionPane.INFORMATION_MESSAGE);
                     signUpFrame.setVisible(false);
                     setVisible(true);
                 } else if (line.equals("Blank")) {
@@ -593,9 +618,6 @@ class StoreApplication extends JFrame implements ActionListener {
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Email Taken")) {
                     JOptionPane.showMessageDialog(null, "That email is taken! Please try again.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Please check the fields and try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (IOException ex) {
