@@ -59,6 +59,7 @@ class StoreApplication extends JFrame implements ActionListener {
     String[] recipientNames;
     JComboBox<String> comboBox = new JComboBox<>();
     JComboBox recipientSelection;
+    JTextField messageField;
 
 
     public StoreApplication() {
@@ -382,13 +383,13 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel messagePanel = new JPanel();
         messagePanel.setLayout(new FlowLayout());
 
-        JTextField jTextField = new JTextField(50);
-        jTextField.setPreferredSize(new Dimension(300, 40));
+        messageField = new JTextField(50);
+        messageField.setPreferredSize(new Dimension(300, 40));
 
         sendMessageButton.setPreferredSize(new Dimension(100, 40));
         sendMessageButton.addActionListener(StoreApplication.this);
 
-        messagePanel.add(jTextField);
+        messagePanel.add(messageField);
         messagePanel.add(sendMessageButton);
 
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -783,11 +784,29 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == sendMessageButton) {
-            writer.write("Message");
-            writer.println();
+            writer.println("Send User Message");
+            writer.println(ID);
+            writer.println(String.valueOf(recipientSelection.getSelectedItem()));
+            writer.println(messageField.getText());
             writer.flush();
-            JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
-                    JOptionPane.INFORMATION_MESSAGE);
+
+            try {
+                String response = reader.readLine();
+
+                if ( response.equals("Success") ) {
+                    JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else if ( response.equals("Blocked") ) {
+                    JOptionPane.showMessageDialog(null, "Blocked!", "Conversations",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "This recipient has deleted their account!", "Error",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
 
         if (e.getSource() == storeSendMessageButton) {
