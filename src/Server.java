@@ -168,7 +168,8 @@ public class Server extends Thread {
                 } else if (command.equals("List Users")) {
                     String ID = reader.readLine();
                     String[] usernames = Account.searchUsernames(ID, "");
-                    writer.println("" + usernames.length);
+                    writer.println(usernames.length);
+                    System.out.println("Number of usernames: " + usernames.length);
                     for (String username : usernames) {
                         writer.println(username);
                     }

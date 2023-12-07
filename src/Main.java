@@ -29,14 +29,19 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
     JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
-            signUpButton, registerButton, storeSendMessageButton, searchButton;
+            signUpButton, registerButton, storeSendMessageButton, searchButton, addUserButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
     JButton deleteAccountButton = new JButton("Delete Account");
     JButton contactStoreButton = new JButton("Contact Store");
     JButton sendMessageButton = new JButton("Send");
-    JButton searchUserButton = new JButton("SearchUser");
+    JButton searchUserButton = new JButton("Search User");
+    JButton createStoreButton = new JButton("Create Store");
+    JTextField storeName;
+    JTextField storeDesc;
+    JButton confirmStoreCreateButton;
     JComboBox roleSetting;
+    JFrame storeCreationWindow;
     boolean loginCompleted = false;
     boolean connectedToServer = false;
 
@@ -51,6 +56,9 @@ class StoreApplication extends JFrame implements ActionListener {
     PrintWriter writer;
     String ID;
     String role;
+    String[] recipientNames;
+    JComboBox<String> comboBox = new JComboBox<>();
+    JComboBox recipientSelection;
 
 
     public StoreApplication() {
@@ -196,6 +204,10 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 }
 
+                if (tabIndex == 1) {
+
+
+                }
 
                 if (tabIndex == 2) {
 
@@ -210,6 +222,10 @@ class StoreApplication extends JFrame implements ActionListener {
                         accountUsername = reader.readLine();
                         accountEmail = reader.readLine();
                         accountPassword = reader.readLine();
+
+                        System.out.println(accountUsername);
+                        System.out.println(accountEmail);
+                        System.out.println(accountPassword);
 
                         usernameSetting.setText(accountUsername);
                         emailSetting.setText(accountEmail);
@@ -323,7 +339,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         // Create message area
 
-        JTextArea msgArea = new JTextArea("English", 20, 60);
+        JTextArea msgArea = new JTextArea(null, 20, 60);
         JScrollPane msgScrollPane = new JScrollPane(msgArea);
         msgArea.setEditable(false);
 
@@ -337,7 +353,7 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel recipientPanel = new JPanel();
         recipientPanel.setLayout(new FlowLayout());
 
-        String[] recipientNames = {
+        recipientNames = new String[]{
                 "Sam Walton",
                 "George W. Jenkins",
                 "Dayton Hudson",
@@ -347,7 +363,7 @@ class StoreApplication extends JFrame implements ActionListener {
         JLabel recipientLbl = new JLabel("Recipient:");
         recipientLbl.setPreferredSize(new Dimension(100, 40));
 
-        JComboBox recipientSelection = new JComboBox(recipientNames);
+        recipientSelection = new JComboBox(recipientNames);
         recipientSelection.setPreferredSize(new Dimension(300, 40));
         recipientSelection.addActionListener(StoreApplication.this);
 
@@ -447,6 +463,16 @@ class StoreApplication extends JFrame implements ActionListener {
 
         panel.add(contactStoreButton, c);
 
+        if (!isCustomer) {
+            createStoreButton.setPreferredSize(new Dimension(100, 40));
+            createStoreButton.addActionListener(StoreApplication.this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = 0;
+            c.gridy = 3;
+
+            panel.add(createStoreButton, c);
+        }
+
         return panel;
     }
 
@@ -515,19 +541,37 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.setOpaque(true);
 
         GridBagConstraints c = new GridBagConstraints();
-        String[] recipientNames = {
-                "Sam Walton",
-                "George W. Jenkins",
-                "Dayton Hudson",
-                "Jeff Bezos",
-                "Walgreen Boosts Alliance, Inc",
-                "Die Familie Albrecht"
-        };
-        JComboBox<String> comboBox = new JComboBox<>(recipientNames);
+
+        writer.println("List Users");
+        writer.println(ID);
+        writer.flush();
+
+        comboBox = new JComboBox<>();
+
+        try {
+            String usernameCountString = reader.readLine();
+            int usernameCount = Integer.parseInt(usernameCountString);
+            System.out.println("Received from server: " + usernameCount);
+            for (int i = 0; i < usernameCount; i++) {
+                String username = reader.readLine();
+                comboBox.addItem(username);
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(comboBox, c);
+
+        addUserButton = new JButton("Add User");
+        addUserButton.addActionListener(StoreApplication.this);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(addUserButton, c);
 
         frame2.getContentPane().add(BorderLayout.CENTER, panel);
         frame2.setVisible(true);
@@ -587,7 +631,54 @@ class StoreApplication extends JFrame implements ActionListener {
         frame.setResizable(true);
     }
 
+    private void initializeStoreCreationWindow() {
+        storeCreationWindow = new JFrame("Create Store");
+        storeCreationWindow.setSize(new Dimension(300, 200));
 
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setOpaque(true);
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        JLabel label1 = new JLabel("Store Name");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(label1, c);
+
+        storeName = new JTextField();
+        storeName.setPreferredSize(new Dimension(300, 40));
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(storeName, c);
+
+        JLabel label2 = new JLabel("Store Description");
+        c.gridx = 0;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(label2, c);
+
+        storeDesc = new JTextField();
+        storeDesc.setPreferredSize(new Dimension(300, 40));
+        c.gridx = 0;
+        c.gridy = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(storeDesc, c);
+
+        confirmStoreCreateButton = new JButton("Create Store");
+        confirmStoreCreateButton.addActionListener(StoreApplication.this);
+        confirmStoreCreateButton.setPreferredSize(new Dimension(100, 40));
+        c.gridx = 0;
+        c.gridy = 4;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(confirmStoreCreateButton, c);
+
+        storeCreationWindow.getContentPane().add(BorderLayout.CENTER, panel);
+        storeCreationWindow.setVisible(true);
+        storeCreationWindow.setResizable(true);
+    }
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
@@ -648,6 +739,7 @@ class StoreApplication extends JFrame implements ActionListener {
             }
 
         }
+
         if (e.getSource() == saveButton) {
             writer.println("Save Account Data");
             writer.println(ID);
@@ -675,11 +767,13 @@ class StoreApplication extends JFrame implements ActionListener {
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+
         if (e.getSource() == clearButton) {
             usernameSetting.setText("");
             emailSetting.setText("");
             passwordSetting.setText("");
         }
+
         if (e.getSource() == contactStoreButton) {
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
@@ -687,6 +781,7 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == searchUserButton) {
             EventQueue.invokeLater(this::createSearchUserWindow );
         }
+
         if (e.getSource() == sendMessageButton) {
             writer.write("Message");
             writer.println();
@@ -694,6 +789,7 @@ class StoreApplication extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
         if (e.getSource() == storeSendMessageButton) {
             writer.write("Message");
             writer.println();
@@ -702,18 +798,22 @@ class StoreApplication extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
         if (e.getSource() == blockRecipientButton) {
             JOptionPane.showMessageDialog(null, "Recipient Blocked!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
         if (e.getSource() == appearInvisibleToRecipientButton) {
             JOptionPane.showMessageDialog(null, "You are now invisible to this recipient", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
         if (e.getSource() == signUpButton) {
             setVisible(false);
             EventQueue.invokeLater(this::initializeSignUpPage);
         }
+
         if (e.getSource() == registerButton) {
 
             try {
@@ -751,6 +851,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 throw new RuntimeException(ex);
             }
         }
+
         if (e.getSource() == deleteAccountButton) {
             writer.println("Delete Account");
             writer.println(ID);
@@ -758,6 +859,45 @@ class StoreApplication extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Account Deleted!", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+
+        if (e.getSource() == createStoreButton) {
+            EventQueue.invokeLater(this::initializeStoreCreationWindow);
+        }
+
+        if (e.getSource() == confirmStoreCreateButton) {
+            writer.println("Create Store");
+            writer.println(ID);
+            writer.println(storeName.getText());
+            writer.println(storeDesc.getText());
+            writer.flush();
+
+            try {
+                String line = reader.readLine();
+
+                if (line.equals("Success")) {
+                    JOptionPane.showMessageDialog(null, "Store created!",
+                            "Success!", JOptionPane.INFORMATION_MESSAGE);
+                    storeCreationWindow.setVisible(false);
+                } else if (line.equals("Name Blank")) {
+                    JOptionPane.showMessageDialog(null, "The store name is blank. Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (line.equals("Name Exists")) {
+                    JOptionPane.showMessageDialog(null, "That store name is taken! Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+
+            }
+        }
+        if (e.getSource() == addUserButton) {
+            String selection = String.valueOf(comboBox.getSelectedItem());
+            recipientSelection.addItem(selection);
+            JOptionPane.showMessageDialog(null, "Item added!", "Message",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 }
 
