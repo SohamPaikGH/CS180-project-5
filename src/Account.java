@@ -158,9 +158,10 @@ public class Account {
                 String senderID = (String) jsonMessage.get("senderID");
                 String recipientID = (String) jsonMessage.get("recipientID");
                 String message = (String) jsonMessage.get("message");
-                boolean deleted = (boolean) jsonMessage.get("deleted");
+                boolean deletedForSender = (boolean) jsonMessage.get("deletedForSender");
+                boolean deletedForRecipient = (boolean) jsonMessage.get("deletedForRecipient");
                 long order = (long) jsonMessage.get("order");
-                Message messageObject = new Message(senderID, recipientID, message, deleted, order);
+                Message messageObject = new Message(senderID, recipientID, message, deletedForSender, deletedForRecipient, order);
                 messagesList.add(messageObject);
             }
             Message[] messages = new Message[messagesList.size()];
@@ -209,7 +210,8 @@ public class Account {
                 messageJsonObject.put("senderID", message.getSenderID());
                 messageJsonObject.put("recipientID", message.getRecipientID());
                 messageJsonObject.put("message", message.getMessage());
-                messageJsonObject.put("deleted", message.isDeleted());
+                messageJsonObject.put("deletedForSender", message.isDeletedForSender());
+                messageJsonObject.put("deletedForRecipient", message.isDeletedForRecipient());
                 messageJsonObject.put("order", message.getOrder());
                 messagesArray.add(messageJsonObject);
             }
