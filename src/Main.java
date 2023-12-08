@@ -41,7 +41,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField storeDesc;
     JButton confirmStoreCreateButton;
     JComboBox roleSetting;
-    JFrame storeCreationWindow;
+    JFrame storeCreationWindow, frame2;
     boolean loginCompleted = false;
     boolean connectedToServer = false;
 
@@ -379,17 +379,10 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel recipientPanel = new JPanel();
         recipientPanel.setLayout(new FlowLayout());
 
-        recipientNames = new String[]{
-                "Sam Walton",
-                "George W. Jenkins",
-                "Dayton Hudson",
-                "Jeff Bezos",
-        };
-
         JLabel recipientLbl = new JLabel("Recipient:");
         recipientLbl.setPreferredSize(new Dimension(100, 40));
 
-        recipientSelection = new JComboBox(recipientNames);
+        recipientSelection = new JComboBox();
         recipientSelection.setPreferredSize(new Dimension(300, 40));
         recipientSelection.addActionListener(StoreApplication.this);
 
@@ -571,7 +564,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return tableModel;
     }
     public void createSearchUserWindow() {
-        JFrame frame2 = new JFrame("Search User");
+        frame2 = new JFrame("Search User");
         frame2.setSize(new Dimension(300, 200));
 
         try {
@@ -726,16 +719,16 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
-//        Account.resetAccountsData();
-//        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-//        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
+        Account.resetAccountsData();
+        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
+        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
+        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
+        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
+        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
+        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
+        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
+        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
+        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
     }
 
     @Override
@@ -991,6 +984,7 @@ class StoreApplication extends JFrame implements ActionListener {
             recipientSelection.addItem(selection);
             JOptionPane.showMessageDialog(null, "Item added!", "Message",
                     JOptionPane.ERROR_MESSAGE);
+            frame2.setVisible(false);
         }
         if ( e.getSource() == selectRecipientButton ) {
             String recipientName = String.valueOf(recipientSelection.getSelectedItem());
