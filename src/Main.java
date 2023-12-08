@@ -206,7 +206,6 @@ class StoreApplication extends JFrame implements ActionListener {
                 int tabIndex = tabbedPane.getSelectedIndex();
 
                 if (tabIndex == 0) {
-                    System.out.println("Hit!");
                     TableModel tableModel1 = getTableModel();
                     jTable1.setModel(tableModel1);
 
@@ -951,6 +950,29 @@ class StoreApplication extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Store created!",
                             "Success!", JOptionPane.INFORMATION_MESSAGE);
                     storeCreationWindow.setVisible(false);
+
+                    TableModel tableModel1 = getTableModel();
+                    jTable1.setModel(tableModel1);
+
+                    if (!isCustomer) {
+                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Save Store Data"));
+
+                        jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Delete Store"));
+
+                    } else {
+                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Contact Store"));
+                    }
+                    jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+
                 } else if (line.equals("Name Blank")) {
                     JOptionPane.showMessageDialog(null, "The store name is blank. Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -961,8 +983,8 @@ class StoreApplication extends JFrame implements ActionListener {
 
             } catch (IOException ex) {
                 ex.printStackTrace();
-
             }
+
         }
         if (e.getSource() == addUserButton) {
             String selection = String.valueOf(comboBox.getSelectedItem());
