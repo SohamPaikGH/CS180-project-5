@@ -844,11 +844,21 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == blockRecipientButton) {
+            writer.println("Toggle Block");
+            writer.println(ID);
+            writer.println(recipientSelection.getSelectedItem());
+            writer.flush();
+
             JOptionPane.showMessageDialog(null, "Recipient Blocked!", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
 
         if (e.getSource() == appearInvisibleToRecipientButton) {
+            writer.println("Toggle Invisible");
+            writer.println(ID);
+            writer.println(recipientSelection.getSelectedItem());
+            writer.flush();
+
             JOptionPane.showMessageDialog(null, "You are now invisible to this recipient", "Conversations",
                     JOptionPane.INFORMATION_MESSAGE);
         }
