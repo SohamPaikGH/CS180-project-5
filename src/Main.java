@@ -60,7 +60,12 @@ class StoreApplication extends JFrame implements ActionListener {
     JComboBox<String> comboBox = new JComboBox<>();
     JComboBox recipientSelection;
     JTextField messageField;
+    JButton selectRecipientButton = new JButton("Select Recipient");
+    JTable jTable1;
 
+    public JTable getjTable1() {
+        return jTable1;
+    }
 
     public StoreApplication() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -202,6 +207,8 @@ class StoreApplication extends JFrame implements ActionListener {
                 if (tabIndex == 0) {
                     writer.println("Customer Dashboard");
                     writer.flush();
+
+
 
                 }
 
@@ -370,6 +377,11 @@ class StoreApplication extends JFrame implements ActionListener {
 
         recipientPanel.add(recipientLbl);
         recipientPanel.add(recipientSelection);
+
+        selectRecipientButton.setPreferredSize(new Dimension(200, 40));
+        selectRecipientButton.addActionListener(StoreApplication.this);
+        recipientPanel.add(selectRecipientButton);
+
         searchUserButton.setPreferredSize(new Dimension(200, 40));
         searchUserButton.addActionListener(StoreApplication.this);
         recipientPanel.add(searchUserButton);
@@ -437,14 +449,26 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 0;
         panel.add(title, c);
 
-        JTable jTable1 = new JTable();
+        jTable1 = new JTable();
 
         TableModel tableModel = getTableModel();
 
         jTable1.setModel(tableModel);
 
-        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        if (!isCustomer) {
+            jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+            jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this,
+                    "Save Store Data"));
+
+            jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), this,
+                    "Delete Store"));
+
+        } else {
+            jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+            jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this,
+                    "Contact Store"));
+        }
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
         JScrollPane jScrollPane1 = new JScrollPane();
@@ -503,6 +527,7 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.flush();
             try {
                 int storeCount = Integer.parseInt(reader.readLine());
+                System.out.println(storeCount);
                 data = new Object[storeCount][];
                 for (int i = 0; i < storeCount; i++) {
                     data[i] = new Object[4];
@@ -683,16 +708,16 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
-        Account.resetAccountsData();
-        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
+//        Account.resetAccountsData();
+//        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
+//        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
+//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
+//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
+//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
+//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
+//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
+//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
+//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
     }
 
     @Override
@@ -916,7 +941,34 @@ class StoreApplication extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Item added!", "Message",
                     JOptionPane.ERROR_MESSAGE);
         }
+        if ( e.getSource() == selectRecipientButton ) {
+            String recipientName = String.valueOf(recipientSelection.getSelectedItem());
+            writer.println("Conversation");
+            writer.println(ID);
+            writer.println(recipientName);
+            writer.flush();
+            System.out.println(recipientName);
 
+            try {
+                String messageCountLine = reader.readLine();
+                int messageCount = Integer.parseInt(messageCountLine);
+
+                for (int i = 0; i < messageCount; i++) {
+                    String line = reader.readLine();
+                    System.out.println(line);
+                    if ( i % 2 == 0 ) {
+                        System.out.printf("%s:", line);
+                    } else {
+                        System.out.printf("%s\n", line);
+                    }
+
+                }
+
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+        }
     }
 }
 
@@ -944,12 +996,16 @@ class ButtonEditor extends DefaultCellEditor {
     protected JButton btn;
     private String lbl;
     private boolean clicked;
+    String action;
     StoreApplication storeApplication;
+    String newStoreName;
+    String newStoreDesc;
 
-    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication) {
+    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication, String action) {
         super(checkBox);
 
         this.storeApplication = storeApplication;
+        this.action = action;
 
         btn = new JButton();
         btn.setOpaque(true);
@@ -961,6 +1017,27 @@ class ButtonEditor extends DefaultCellEditor {
             }
         });
     }
+
+//    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication, String action, String newStoreName,
+//                        String newStoreDesc) {
+//        super(checkBox);
+//
+//        this.storeApplication = storeApplication;
+//        this.action = action;
+//
+//        this.newStoreName = newStoreName;
+//        this.newStoreDesc = newStoreDesc;
+//
+//        btn = new JButton();
+//        btn.setOpaque(true);
+//
+//        btn.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                fireEditingStopped();
+//            }
+//        });
+//    }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
@@ -982,7 +1059,61 @@ class ButtonEditor extends DefaultCellEditor {
     public Object getCellEditorValue() {
 
         if (clicked) {
-            EventQueue.invokeLater(storeApplication::createStoreContactWindow);
+
+            if (storeApplication.isCustomer) {
+
+                if (action.equals("Contact Store")) {
+                    EventQueue.invokeLater(storeApplication::createStoreContactWindow);
+                }
+
+            } else {
+                
+                if (action.equals("Save Store Data")) {
+                    int row = storeApplication.getjTable1().getSelectedRow();
+                    newStoreName = storeApplication.getjTable1().getValueAt(row, 0).toString();
+                    newStoreDesc = storeApplication.getjTable1().getValueAt(row, 1).toString();
+
+                    storeApplication.writer.println("Save Store Data");
+                    System.out.println("Save Store Data");
+                    storeApplication.writer.println(storeApplication.ID);
+                    storeApplication.writer.println(row);
+                    storeApplication.writer.println(newStoreName);
+                    storeApplication.writer.println(newStoreDesc);
+                    storeApplication.writer.flush();
+
+                    try {
+                        String line = storeApplication.reader.readLine();
+
+                        if (line.equals("Success")) {
+                            JOptionPane.showMessageDialog(null, "Success!", "Message",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } else if (line.equals("Name Exists")) {
+                            JOptionPane.showMessageDialog(null, "Name already exists. Please try again!", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            
+                        } else if (line.equals("Name Blank")) {
+                            JOptionPane.showMessageDialog(null, "Name is blank. Please try again!", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (action.equals("Delete Store")) {
+                    int row = storeApplication.getjTable1().getSelectedRow();
+                    System.out.println(row);
+
+                    storeApplication.writer.println("Delete Store");
+                    storeApplication.writer.println(storeApplication.ID);
+                    storeApplication.writer.println(row);
+                    storeApplication.writer.flush();
+
+                    JOptionPane.showMessageDialog(null, "Store deleted!", "Message",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            }
 
         }
         clicked = false;
