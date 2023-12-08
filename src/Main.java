@@ -29,7 +29,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
     JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
-            signUpButton, registerButton, storeSendMessageButton, searchButton, addUserButton;
+            signUpButton, registerButton, storeSendMessageButton, searchButton;
     JButton saveButton = new JButton("Save");
     JButton clearButton = new JButton("Clear");
     JButton deleteAccountButton = new JButton("Delete Account");
@@ -58,8 +58,9 @@ class StoreApplication extends JFrame implements ActionListener {
     String ID;
     String role;
     String[] recipientNames;
-    JComboBox<String> comboBox = new JComboBox<>();
+    JTextField userSearchField;
     JComboBox recipientSelection;
+    JComboBox<String> searchUserResults;
     JTextField messageField;
     JButton selectRecipientButton = new JButton("Select Recipient");
     JTable jTable1;
@@ -381,12 +382,19 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel recipientPanel = new JPanel();
         recipientPanel.setLayout(new FlowLayout());
 
-        recipientNames = new String[]{
-                "Sam Walton",
-                "George W. Jenkins",
-                "Dayton Hudson",
-                "Jeff Bezos",
-        };
+        writer.println("List Users");
+        writer.println(ID);
+        writer.flush();
+
+        try {
+            int userCount = Integer.parseInt(reader.readLine());
+            recipientNames = new String[userCount];
+            for (int i = 0; i < userCount; i++) {
+                recipientNames[i] = reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         JLabel recipientLbl = new JLabel("Recipient:");
         recipientLbl.setPreferredSize(new Dimension(100, 40));
@@ -588,36 +596,25 @@ class StoreApplication extends JFrame implements ActionListener {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        writer.println("List Users");
-        writer.println(ID);
-        writer.flush();
-
-        comboBox = new JComboBox<>();
-
-        try {
-            String usernameCountString = reader.readLine();
-            int usernameCount = Integer.parseInt(usernameCountString);
-            System.out.println("Received from server: " + usernameCount);
-            for (int i = 0; i < usernameCount; i++) {
-                String username = reader.readLine();
-                comboBox.addItem(username);
-            }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+        userSearchField = new JTextField();
 
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(comboBox, c);
+        panel.add(userSearchField, c);
 
-        addUserButton = new JButton("Add User");
-        addUserButton.addActionListener(StoreApplication.this);
+        searchButton = new JButton("Search Username");
+        searchButton.addActionListener(StoreApplication.this);
         c.gridx = 0;
         c.gridy = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(addUserButton, c);
+        panel.add(searchButton, c);
+
+        searchUserResults = new JComboBox();
+        c.gridx = 0;
+        c.gridy = 4;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(searchUserResults, c);
 
         frame2.getContentPane().add(BorderLayout.CENTER, panel);
         frame2.setVisible(true);
@@ -728,16 +725,16 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
-//        Account.resetAccountsData();
-//        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-//        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
+        Account.resetAccountsData();
+        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
+        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
+        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
+        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
+        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
+        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
+        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
+        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
+        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
     }
 
     @Override
@@ -965,11 +962,25 @@ class StoreApplication extends JFrame implements ActionListener {
 
             }
         }
-        if (e.getSource() == addUserButton) {
-            String selection = String.valueOf(comboBox.getSelectedItem());
-            recipientSelection.addItem(selection);
-            JOptionPane.showMessageDialog(null, "Item added!", "Message",
-                    JOptionPane.ERROR_MESSAGE);
+        if (e.getSource() == searchButton) {
+            String searchText = String.valueOf(searchUserButton.getText());
+            writer.println("Search Users");
+            writer.println(ID);
+            writer.println(searchText);
+            writer.flush();
+            searchUserResults.removeAllItems();
+            try {
+                int resultCount = Integer.parseInt(reader.readLine());
+                if (resultCount == 0) {
+                    searchUserResults.addItem("No results");
+                } else {
+                    for (int i = 0; i < resultCount; i++) {
+                        searchUserResults.addItem(reader.readLine());
+                    }
+                }
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
         }
         if ( e.getSource() == selectRecipientButton ) {
             String recipientName = String.valueOf(recipientSelection.getSelectedItem());
