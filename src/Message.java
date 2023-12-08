@@ -120,7 +120,7 @@ public class Message {
      * @param message the message
      */
     public static void createMessage(String senderID, String recipientID, String message) {
-        Message toSend = new Message(senderID, recipientID, message, false, getConversationLength(senderID, recipientID));
+        Message toSend = new Message(senderID, recipientID, message, false, false, getConversationLength(senderID, recipientID));
 
         senderID = Account.toUserID(senderID);
         Message[] senderMessages = Account.getMessages(senderID);
