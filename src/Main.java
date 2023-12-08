@@ -857,7 +857,7 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == storeSendMessageButton) {
             String storeName = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
 
-            writer.println("Send Store Message");
+            writer.println("Send Message");
             writer.println(ID);
             writer.println(storeName);
             writer.println(textField1.getText());
