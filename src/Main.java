@@ -730,6 +730,8 @@ class StoreApplication extends JFrame implements ActionListener {
         Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
         Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
         Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
+        Message.createMessage("0", "2", "Hello!");
+        Message.createMessage("2", "0", "Hi.");
     }
 
     @Override
@@ -831,8 +833,21 @@ class StoreApplication extends JFrame implements ActionListener {
                 String response = reader.readLine();
 
                 if ( response.equals("Success") ) {
-                    JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
-                            JOptionPane.INFORMATION_MESSAGE);
+
+                    String recipientName = String.valueOf(recipientSelection.getSelectedItem());
+                    writer.println("Conversation");
+                    writer.println(ID);
+                    writer.println(recipientName);
+                    writer.flush();
+
+                    String messageCountLine = reader.readLine();
+                    int messageCount = Integer.parseInt(messageCountLine);
+
+                    msgArea.setText(null);
+                    for (int i = 0; i < messageCount; i++) {
+                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                    }
+
                 } else if ( response.equals("Blocked") ) {
                     JOptionPane.showMessageDialog(null, "Blocked!", "Conversations",
                             JOptionPane.ERROR_MESSAGE);
@@ -998,6 +1013,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 String messageCountLine = reader.readLine();
                 int messageCount = Integer.parseInt(messageCountLine);
 
+                msgArea.setText(null);
                 for (int i = 0; i < messageCount; i++) {
                     msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
                 }
