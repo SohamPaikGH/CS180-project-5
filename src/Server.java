@@ -38,7 +38,7 @@ public class Server extends Thread {
                     String role = reader.readLine();
                     if (username.isEmpty() || email.isEmpty() || password.isEmpty() || role.isEmpty()) {
                         writer.println("Blank");
-                    } else if (Account.IDofUsername(username) != null) {
+                    } else if (Account.IDofUsername(username) != null || Account.IDofStorename(username) != null) {
                         writer.println("Username Taken");
                     } else if (Account.IDofEmail(email) != null) {
                         writer.println("Email Taken");
@@ -62,7 +62,7 @@ public class Server extends Thread {
                     String IDofEmail = Account.IDofEmail(email);
                     if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                         writer.println("Blank");
-                    } else if (IDofUsername != null && !IDofUsername.equals(ID)) {
+                    } else if (IDofUsername != null && !IDofUsername.equals(ID) || Account.IDofStorename(username) != null) {
                         writer.println("Username Taken");
                     } else if (IDofEmail != null && !IDofEmail.equals(ID)) {
                         writer.println("Email Taken");
@@ -91,22 +91,13 @@ public class Server extends Thread {
                         writer.println(store.getDescription());
                     }
                     writer.flush();
-                } else if (command.equals("Send User Message")) {
+                } else if (command.equals("Send Message")) {
                     String ID = reader.readLine();
-                    String recipientID = Account.IDofUsername(reader.readLine());
-                    String message = reader.readLine();
+                    String recipient = reader.readLine();
+                    String recipientID = Account.IDofStorename(recipient);
                     if (recipientID == null) {
-                        writer.println("Failure");
-                    } else if (Account.userBlockedByUser(ID, recipientID)) {
-                        writer.println("Blocked");
-                    } else {
-                        Message.createMessage(ID, recipientID, message);
-                        writer.println("Success");
+                        recipientID = Account.IDofUsername(recipient);
                     }
-                    writer.flush();
-                } else if (command.equals("Send Store Message")) {
-                    String ID = reader.readLine();
-                    String recipientID = Account.IDofStorename(reader.readLine());
                     String message = reader.readLine();
                     if (recipientID == null) {
                         writer.println("Failure");

@@ -750,4 +750,22 @@ public class Account {
     public String[] getInvisibleTo() {
         return invisibleTo;
     }
+
+    public String[] returnConversationsWith(String ID) {
+        HashSet<String> IDset = new HashSet<>();
+        Message[] messages = Account.getMessages(ID);
+        for (Message message : messages) {
+            if (ID.equals(message.getSenderID())) {
+                IDset.add(message.getRecipientID());
+            } else {
+                IDset.add(message.getSenderID());
+            }
+        }
+        String[] conversationsWith = new String[IDset.size()];
+        int index = 0;
+        for (String i : IDset) {
+            conversationsWith[index] = Account.getUsername(i);
+        }
+        return conversationsWith;
+    }
 }

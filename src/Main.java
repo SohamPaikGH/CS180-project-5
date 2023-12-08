@@ -835,7 +835,7 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == sendMessageButton) {
-            writer.println("Send User Message");
+            writer.println("Send Message");
             writer.println(ID);
             writer.println(String.valueOf(recipientSelection.getSelectedItem()));
             writer.println(messageField.getText());
