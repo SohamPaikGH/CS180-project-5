@@ -44,6 +44,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JFrame storeCreationWindow, frame2;
     boolean loginCompleted = false;
     boolean connectedToServer = false;
+    JTextArea msgArea;
 
     // if true, user is customer; if false, user is seller
     boolean isCustomer = false;
@@ -365,7 +366,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         // Create message area
 
-        JTextArea msgArea = new JTextArea(null, 20, 60);
+        msgArea = new JTextArea(null, 20, 60);
         JScrollPane msgScrollPane = new JScrollPane(msgArea);
         msgArea.setEditable(false);
 
@@ -992,21 +993,13 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println(ID);
             writer.println(recipientName);
             writer.flush();
-            System.out.println(recipientName);
 
             try {
                 String messageCountLine = reader.readLine();
                 int messageCount = Integer.parseInt(messageCountLine);
-
+                
                 for (int i = 0; i < messageCount; i++) {
-                    String line = reader.readLine();
-                    System.out.println(line);
-                    if ( i % 2 == 0 ) {
-                        System.out.printf("%s:", line);
-                    } else {
-                        System.out.printf("%s\n", line);
-                    }
-
+                    msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
                 }
 
             } catch (IOException exception) {
