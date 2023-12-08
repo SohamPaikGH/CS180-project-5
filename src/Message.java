@@ -4,22 +4,25 @@ public class Message {
     private String senderID;        // ID of the sender of the message
     private String recipientID;     // ID of the recipient of the message
     private String message;         // the message
-    private boolean deleted;        // true if the sender deleted it
-    private long order;              // its order in the conversation it's in
+    private boolean deletedForSender;       // whether the sender deleted it
+    private boolean deletedForRecipient;    // whether the recipient deleted it
+    private long order;             // its order in the conversation it's in
 
     /**
      * Instantiates a message object with the given fields
      * @param senderID ID of the sender of the message
      * @param recipientID ID of the recipient of the message
      * @param message the message
-     * @param deleted true if the sender deleted it
+     * @param deletedForSender true if the sender deleted it
+     * @param deletedForRecipient true if the recipient deleted it
      * @param order its order in the conversation it's in
      */
-    public Message(String senderID, String recipientID, String message, boolean deleted, long order) {
+    public Message(String senderID, String recipientID, String message, boolean deletedForSender, boolean deletedForRecipient, long order) {
         this.senderID = senderID;
         this.recipientID = recipientID;
         this.message = message;
-        this.deleted = deleted;
+        this.deletedForSender = deletedForSender;
+        this.deletedForRecipient = deletedForRecipient;
         this.order = order;
     }
 
@@ -47,12 +50,16 @@ public class Message {
         return message;
     }
 
-    /**
-     * Returns deleted
-     * @return deleted
-     */
-    public boolean isDeleted() {
-        return deleted;
+    public boolean isDeletedForSender() {
+        return deletedForSender;
+    }
+
+    public boolean isDeletedForRecipient() {
+        return deletedForRecipient;
+    }
+
+    public boolean isDeleted(String ID) {
+        return deletedForSender && ID.equals(senderID) || deletedForRecipient && ID.equals(recipientID);
     }
 
     /**
@@ -74,7 +81,9 @@ public class Message {
         long conversationLength = 0;
         for (Message message : messages) {
             if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
-                conversationLength++;
+                if (!message.isDeleted(senderID)) {
+                    conversationLength++;
+                }
             }
         }
         return conversationLength;
@@ -91,7 +100,9 @@ public class Message {
         ArrayList<Message> conversationList = new ArrayList<>();
         for (Message message : messages) {
             if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
-                conversationList.add(message);
+                if (!message.isDeleted(senderID)) {
+                    conversationList.add(message);
+                }
             }
         }
 
@@ -109,7 +120,7 @@ public class Message {
      * @param message the message
      */
     public static void createMessage(String senderID, String recipientID, String message) {
-        Message toSend = new Message(senderID, recipientID, message, false, getConversationLength(senderID, recipientID));
+        Message toSend = new Message(senderID, recipientID, message, false, false, getConversationLength(senderID, recipientID));
 
         senderID = Account.toUserID(senderID);
         Message[] senderMessages = Account.getMessages(senderID);
@@ -168,9 +179,11 @@ public class Message {
     public static void deleteMessage(String senderID, String recipientID, long order) {
         Message[] messages = Account.getMessages(Account.toUserID(senderID));
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
-                    && message.order == order) {
-                message.deleted = true;
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) && message.order == order) {
+                message.deletedForSender = true;
+                break;
+            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) && message.order == order) {
+                message.deletedForRecipient = true;
                 break;
             }
         }
@@ -178,9 +191,11 @@ public class Message {
 
         messages = Account.getMessages(Account.toUserID(recipientID));
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
-                    && message.order == order) {
-                message.deleted = true;
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) && message.order == order) {
+                message.deletedForSender = true;
+                break;
+            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) && message.order == order) {
+                message.deletedForRecipient = true;
                 break;
             }
         }

@@ -997,7 +997,7 @@ class StoreApplication extends JFrame implements ActionListener {
             try {
                 String messageCountLine = reader.readLine();
                 int messageCount = Integer.parseInt(messageCountLine);
-                
+
                 for (int i = 0; i < messageCount; i++) {
                     msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
                 }
