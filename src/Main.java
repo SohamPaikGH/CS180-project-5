@@ -1016,9 +1016,7 @@ class StoreApplication extends JFrame implements ActionListener {
             try {
                 int resultCount = Integer.parseInt(reader.readLine());
                 System.out.println(resultCount);
-                if (resultCount == 0) {
-                    searchUserResults.addItem("No results");
-                } else {
+                if (resultCount != 0) {
                     for (int i = 0; i < resultCount; i++) {
                         searchUserResults.addItem(reader.readLine());
                     }
