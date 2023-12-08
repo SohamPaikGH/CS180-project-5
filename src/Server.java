@@ -124,7 +124,11 @@ public class Server extends Thread {
                     writer.flush();
                 } else if (command.equals("Conversation")) {
                     String ID = reader.readLine();
-                    String recipientID = Account.IDofUsername(reader.readLine());
+                    String recipient = reader.readLine();
+                    String recipientID = Account.IDofUsername(recipient);
+                    if (recipientID == null) {
+                        recipientID = Account.IDofStorename(recipient);
+                    }
                     Message[] messages = Message.getConversationArray(ID, recipientID);
                     writer.println(messages.length);
                     for (Message message : messages) {
