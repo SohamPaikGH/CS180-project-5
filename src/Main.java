@@ -224,8 +224,8 @@ class StoreApplication extends JFrame implements ActionListener {
                                 "Delete Store"));
 
                     } else {
-                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
                                 "Contact Store"));
                     }
@@ -493,8 +493,8 @@ class StoreApplication extends JFrame implements ActionListener {
                     "Delete Store"));
 
         } else {
-            jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-            jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this,
+            jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), this,
                     "Contact Store"));
         }
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
@@ -533,17 +533,18 @@ class StoreApplication extends JFrame implements ActionListener {
         String[] columnNames;
         Object[][] data = null;
         if (role.equals("Customer")) {
-            columnNames = new String[] {"Stores", "Owner", "Actions"};
+            columnNames = new String[] {"Stores", "Descriptions", "Owner", "Actions"};
             writer.println("Customer Dashboard");
             writer.flush();
             try {
                 int storeCount = Integer.parseInt(reader.readLine());
                 data = new Object[storeCount][];
                 for (int i = 0; i < storeCount; i++) {
-                    data[i] = new Object[3];
+                    data[i] = new Object[4];
                     data[i][0] = reader.readLine();
                     data[i][1] = reader.readLine();
-                    data[i][2] = "Contact Store";
+                    data[i][2] = reader.readLine();
+                    data[i][3] = "Contact Store";
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -572,7 +573,7 @@ class StoreApplication extends JFrame implements ActionListener {
         TableModel tableModel = new DefaultTableModel(data, columnNames) {
             public boolean isCellEditable(int row, int column) {
                 if (role.equals("Customer")) {
-                    return column == 2;
+                    return column == 3;
                 } else {
                     return true;
                 }
@@ -986,8 +987,8 @@ class StoreApplication extends JFrame implements ActionListener {
                                 "Delete Store"));
 
                     } else {
-                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
                                 "Contact Store"));
                     }
@@ -1208,8 +1209,8 @@ class ButtonEditor extends DefaultCellEditor {
                                 "Delete Store"));
 
                     } else {
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 storeApplication,
                                 "Contact Store"));
                     }

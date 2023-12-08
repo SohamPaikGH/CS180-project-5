@@ -78,6 +78,7 @@ public class Server extends Thread {
                     writer.println("" + stores.length);
                     for (Store store : stores) {
                         writer.println(store.getName());
+                        writer.println(store.getDescription());
                         writer.println(store.getOwner().getUsername());
                     }
                     writer.flush();
