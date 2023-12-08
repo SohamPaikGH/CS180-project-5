@@ -216,6 +216,33 @@ public class Server extends Thread {
                         writer.println(name);
                     }
                     writer.flush();
+                } else if (command.equals("Edit Message") || command.equals("Delete Message")) {
+                    String ID = reader.readLine();
+                    String recipient = reader.readLine();
+                    String recipientID = Account.IDofUsername(recipient);
+                    if (recipientID == null) {
+                        recipientID = Account.IDofStorename(recipient);
+                    }
+                    int msgIndex = Integer.parseInt(reader.readLine());
+                    String newMessage = reader.readLine();
+                    Message[] conversation = Message.getConversationArray(ID, recipientID);
+                    int index = -1;
+                    Message selectedMessage = null;
+                    for (Message message : conversation) {
+                        if (!(ID.equals(message.getSenderID()) && message.isDeletedForSender() ||
+                                ID.equals(message.getRecipientID()) && message.isDeletedForRecipient())) {
+                            index++;
+                        }
+                        if (index == msgIndex) {
+                            selectedMessage = message;
+                            break;
+                        }
+                    }
+                    if (command.equals("Edit Message")) {
+                        Message.editMessage(selectedMessage.getSenderID(), selectedMessage.getRecipientID(), selectedMessage.getOrder(), newMessage);
+                    } else {
+                        Message.deleteMessage(selectedMessage.getSenderID(), selectedMessage.getRecipientID(), selectedMessage.getOrder());
+                    }
                 }
             }
         } catch (IOException e) {
