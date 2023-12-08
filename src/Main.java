@@ -46,12 +46,13 @@ class StoreApplication extends JFrame implements ActionListener {
     boolean loginCompleted = false;
     boolean connectedToServer = false;
     JTextArea msgArea;
+    JTextField textField1;
 
     // if true, user is customer; if false, user is seller
     boolean isCustomer = false;
     // Close sign-up window
     boolean signUpDone;
-    JFrame signUpFrame;
+    JFrame signUpFrame, storeContactFrame;
     // For networking purposes
     Socket socket;
     BufferedReader reader;
@@ -508,14 +509,6 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(jScrollPane1, c);
 
-        contactStoreButton.setPreferredSize(new Dimension(100, 40));
-        contactStoreButton.addActionListener(StoreApplication.this);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 2;
-
-        panel.add(contactStoreButton, c);
-
         if (!isCustomer) {
             createStoreButton.setPreferredSize(new Dimension(100, 40));
             createStoreButton.addActionListener(StoreApplication.this);
@@ -628,8 +621,8 @@ class StoreApplication extends JFrame implements ActionListener {
         frame2.setResizable(true);
     }
     public void createStoreContactWindow() {
-        JFrame frame = new JFrame("Contact Store");
-        frame.setSize(new Dimension(300, 200));
+        storeContactFrame = new JFrame("Contact Store");
+        storeContactFrame.setSize(new Dimension(300, 200));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -643,30 +636,17 @@ class StoreApplication extends JFrame implements ActionListener {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel label1 = new JLabel("Select Store");
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(label1, c);
-
-        String[] stores = {"Walmart", "Publix", "Target", "Walgreens", "Amazon", "Aldi"};
-        JComboBox<String> comboBox = new JComboBox<>(stores);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(comboBox, c);
-
-        JLabel label2 = new JLabel("Message");
+        JLabel label1 = new JLabel("Message");
         c.gridx = 0;
         c.gridy = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(label2, c);
+        panel.add(label1, c);
 
-        JTextField textField = new JTextField(20);
+        textField1 = new JTextField(20);
         c.gridx = 0;
         c.gridy = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(textField, c);
+        panel.add(textField1, c);
 
         storeSendMessageButton = new JButton("Send");
         storeSendMessageButton.addActionListener(StoreApplication.this);
@@ -676,9 +656,9 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(storeSendMessageButton, c);
 
-        frame.getContentPane().add(BorderLayout.CENTER, panel);
-        frame.setVisible(true);
-        frame.setResizable(true);
+        storeContactFrame.getContentPane().add(BorderLayout.CENTER, panel);
+        storeContactFrame.setVisible(true);
+        storeContactFrame.setResizable(true);
     }
 
     private void initializeStoreCreationWindow() {
@@ -744,6 +724,7 @@ class StoreApplication extends JFrame implements ActionListener {
         Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
         Message.createMessage("0", "2", "Hello!");
         Message.createMessage("2", "0", "Hi.");
+        Account.block("4", "0");
     }
 
     @Override
@@ -874,12 +855,31 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == storeSendMessageButton) {
-            writer.write("Message");
-            writer.println();
+            String storeName = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
+
+            writer.println("Send Store Message");
+            writer.println(ID);
+            writer.println(storeName);
+            writer.println(textField1.getText());
             writer.flush();
 
-            JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
-                    JOptionPane.INFORMATION_MESSAGE);
+            try {
+                String line = reader.readLine();
+
+                if (line.equals("Success")) {
+                    JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else if (line.equals("Blocked")) {
+                    JOptionPane.showMessageDialog(null, "Blocked!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "This store has been deleted!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
         }
 
         if (e.getSource() == blockRecipientButton) {
