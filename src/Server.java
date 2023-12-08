@@ -204,6 +204,14 @@ public class Server extends Thread {
                         writer.println("Success");
                     }
                     writer.flush();
+                } else if (command.equals("Get Conversations")) {
+                    String ID = reader.readLine();
+                    String[] names = Account.getConversationsWith(ID);
+                    writer.println(names.length);
+                    for (String name : names) {
+                        writer.println(name);
+                    }
+                    writer.flush();
                 }
             }
         } catch (IOException e) {

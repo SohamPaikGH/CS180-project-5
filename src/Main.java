@@ -235,7 +235,19 @@ class StoreApplication extends JFrame implements ActionListener {
                 }
 
                 if (tabIndex == 1) {
+                    writer.println("Get Conversations");
+                    writer.println(ID);
+                    writer.flush();
 
+                    recipientSelection.removeAllItems();
+                    try {
+                        int namesCount = Integer.parseInt(reader.readLine());
+                        for (int i = 0; i < namesCount; i++) {
+                            recipientSelection.addItem(reader.readLine());
+                        }
+                    } catch (IOException ee) {
+                        ee.printStackTrace();
+                    }
 
                 }
 
@@ -383,19 +395,7 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel recipientPanel = new JPanel();
         recipientPanel.setLayout(new FlowLayout());
 
-        writer.println("List Users");
-        writer.println(ID);
-        writer.flush();
 
-        try {
-            int userCount = Integer.parseInt(reader.readLine());
-            recipientNames = new String[userCount];
-            for (int i = 0; i < userCount; i++) {
-                recipientNames[i] = reader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         JLabel recipientLbl = new JLabel("Recipient:");
         recipientLbl.setPreferredSize(new Dimension(100, 40));
@@ -403,6 +403,20 @@ class StoreApplication extends JFrame implements ActionListener {
         recipientSelection = new JComboBox();
         recipientSelection.setPreferredSize(new Dimension(300, 40));
         recipientSelection.addActionListener(StoreApplication.this);
+
+        writer.println("Get Conversations");
+        writer.println(ID);
+        writer.flush();
+
+        recipientSelection.removeAllItems();
+        try {
+            int namesCount = Integer.parseInt(reader.readLine());
+            for (int i = 0; i < namesCount; i++) {
+                recipientSelection.addItem(reader.readLine());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         recipientPanel.add(recipientLbl);
         recipientPanel.add(recipientSelection);
@@ -724,6 +738,8 @@ class StoreApplication extends JFrame implements ActionListener {
         Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
         Message.createMessage("0", "2", "Hello!");
         Message.createMessage("2", "0", "Hi.");
+        Message.createMessage("0", "4", "Hi.");
+        Message.createMessage("0", "1", "Hello.");
         Account.block("4", "0");
     }
 
