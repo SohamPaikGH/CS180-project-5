@@ -1000,7 +1000,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == searchButton) {
-            String searchText = String.valueOf(searchUserButton.getText());
+            String searchText = userSearchField.getText();
             writer.println("Search Users");
             writer.println(ID);
             writer.println(searchText);
@@ -1008,6 +1008,7 @@ class StoreApplication extends JFrame implements ActionListener {
             searchUserResults.removeAllItems();
             try {
                 int resultCount = Integer.parseInt(reader.readLine());
+                System.out.println(resultCount);
                 if (resultCount == 0) {
                     searchUserResults.addItem("No results");
                 } else {
