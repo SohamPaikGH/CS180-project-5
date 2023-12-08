@@ -62,6 +62,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField messageField;
     JButton selectRecipientButton = new JButton("Select Recipient");
     JTable jTable1;
+    TableModel tableModel;
 
     public JTable getjTable1() {
         return jTable1;
@@ -205,10 +206,28 @@ class StoreApplication extends JFrame implements ActionListener {
                 int tabIndex = tabbedPane.getSelectedIndex();
 
                 if (tabIndex == 0) {
-                    writer.println("Customer Dashboard");
-                    writer.flush();
+                    System.out.println("Hit!");
+                    TableModel tableModel1 = getTableModel();
+                    jTable1.setModel(tableModel1);
 
+                    if (!isCustomer) {
+                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Save Store Data"));
 
+                        jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Delete Store"));
+
+                    } else {
+                        jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Contact Store"));
+                    }
+                    jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
                 }
 
@@ -451,7 +470,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         jTable1 = new JTable();
 
-        TableModel tableModel = getTableModel();
+        tableModel = getTableModel();
 
         jTable1.setModel(tableModel);
 
