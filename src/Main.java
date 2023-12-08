@@ -40,6 +40,7 @@ class StoreApplication extends JFrame implements ActionListener {
     JTextField storeName;
     JTextField storeDesc;
     JButton confirmStoreCreateButton;
+    JButton addRecipientButton = new JButton("Select Recipient");
     JComboBox roleSetting;
     JFrame storeCreationWindow, frame2;
     boolean loginCompleted = false;
@@ -615,6 +616,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(searchUserResults, c);
 
+        addRecipientButton.addActionListener(StoreApplication.this);
+        c.gridx = 0;
+        c.gridy = 5;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(addRecipientButton, c);
+
         frame2.getContentPane().add(BorderLayout.CENTER, panel);
         frame2.setVisible(true);
         frame2.setResizable(true);
@@ -1000,7 +1007,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == searchButton) {
-            String searchText = String.valueOf(searchUserButton.getText());
+            String searchText = userSearchField.getText();
             writer.println("Search Users");
             writer.println(ID);
             writer.println(searchText);
@@ -1008,6 +1015,7 @@ class StoreApplication extends JFrame implements ActionListener {
             searchUserResults.removeAllItems();
             try {
                 int resultCount = Integer.parseInt(reader.readLine());
+                System.out.println(resultCount);
                 if (resultCount == 0) {
                     searchUserResults.addItem("No results");
                 } else {
@@ -1034,6 +1042,31 @@ class StoreApplication extends JFrame implements ActionListener {
                 for (int i = 0; i < messageCount; i++) {
                     msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
                 }
+
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+        }
+        if (e.getSource() == addRecipientButton) {
+            Object recipientName = searchUserResults.getSelectedItem();
+            recipientSelection.addItem(recipientName);
+
+            writer.println("Conversation");
+            writer.println(ID);
+            writer.println(recipientName.toString());
+            writer.flush();
+
+            try {
+                String messageCountLine = reader.readLine();
+                int messageCount = Integer.parseInt(messageCountLine);
+
+                msgArea.setText(null);
+                for (int i = 0; i < messageCount; i++) {
+                    msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                }
+
+                frame2.setVisible(false);
 
             } catch (IOException exception) {
                 exception.printStackTrace();
