@@ -134,10 +134,18 @@ public class Server extends Thread {
                     String ID = reader.readLine();
                     String recipientID = Account.IDofUsername(reader.readLine());
                     Message[] messages = Message.getConversationArray(ID, recipientID);
-                    writer.println(messages.length);
+                    int length = messages.length;
                     for (Message message : messages) {
-                        writer.println(Account.getUsername(message.getSenderID()));
-                        writer.println(message.getMessage());
+                        if (message.isDeleted() && message.getSenderID().equals(ID)) {
+                            length--;
+                        }
+                    }
+                    writer.println(length);
+                    for (Message message : messages) {
+                        if (!(message.isDeleted() && message.getSenderID().equals(ID))) {
+                            writer.println(Account.getUsername(message.getSenderID()));
+                            writer.println(message.getMessage());
+                        }
                     }
                     writer.flush();
                 } else if (command.equals("Toggle Block")) {
