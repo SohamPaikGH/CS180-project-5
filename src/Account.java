@@ -751,7 +751,7 @@ public class Account {
         return invisibleTo;
     }
 
-    public String[] returnConversationsWith(String ID) {
+    public static String[] getConversationsWith(String ID) {
         HashSet<String> IDset = new HashSet<>();
         Message[] messages = Account.getMessages(ID);
         for (Message message : messages) {
@@ -765,6 +765,7 @@ public class Account {
         int index = 0;
         for (String i : IDset) {
             conversationsWith[index] = Account.getUsername(i);
+            index++;
         }
         return conversationsWith;
     }
