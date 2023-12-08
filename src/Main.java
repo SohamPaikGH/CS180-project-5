@@ -519,7 +519,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
-    private TableModel getTableModel() {
+    public TableModel getTableModel() {
         String[] columnNames;
         Object[][] data = null;
         if (role.equals("Customer")) {
@@ -1069,27 +1069,6 @@ class ButtonEditor extends DefaultCellEditor {
         });
     }
 
-//    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication, String action, String newStoreName,
-//                        String newStoreDesc) {
-//        super(checkBox);
-//
-//        this.storeApplication = storeApplication;
-//        this.action = action;
-//
-//        this.newStoreName = newStoreName;
-//        this.newStoreDesc = newStoreDesc;
-//
-//        btn = new JButton();
-//        btn.setOpaque(true);
-//
-//        btn.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                fireEditingStopped();
-//            }
-//        });
-//    }
-
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if (isSelected) {
@@ -1162,6 +1141,30 @@ class ButtonEditor extends DefaultCellEditor {
 
                     JOptionPane.showMessageDialog(null, "Store deleted!", "Message",
                             JOptionPane.INFORMATION_MESSAGE);
+
+                    TableModel tableModel1 = storeApplication.getTableModel();
+                    storeApplication.jTable1.setModel(tableModel1);
+
+                    if (!storeApplication.isCustomer) {
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                storeApplication,
+                                "Save Store Data"));
+
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                storeApplication,
+                                "Delete Store"));
+
+                    } else {
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                storeApplication,
+                                "Contact Store"));
+                    }
+                    storeApplication.jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+
+
                 }
 
             }
