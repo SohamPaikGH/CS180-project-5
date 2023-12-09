@@ -381,7 +381,7 @@ public class Account {
      * @return blocked
      */
     public static String[] getBlocked(String ID) {
-        return accountWithID(ID).blocked;
+        return accountWithID(Account.toUserID(ID)).blocked;
     }
 
     /**
@@ -390,7 +390,7 @@ public class Account {
      * @return invisibleTo
      */
     public static String[] getInvisibleTo(String ID) {
-        return accountWithID(ID).invisibleTo;
+        return accountWithID(Account.toUserID(ID)).invisibleTo;
     }
 
     /**
@@ -651,7 +651,7 @@ public class Account {
      */
     public static boolean userBlockedByUser(String userOneID, String userTwoID) {
         for (String ID : getBlocked(userTwoID)) {
-            if (ID.equals(userOneID)) {
+            if (ID.equals(Account.toUserID(userOneID))) {
                 return true;
             }
         }
@@ -666,7 +666,7 @@ public class Account {
      */
     public static boolean userCantSeeUser(String userOneID, String userTwoID) {
         for (String ID : getInvisibleTo(userTwoID)) {
-            if (ID.equals(userOneID)) {
+            if (ID.equals(Account.toUserID(userOneID))) {
                 return true;
             }
         }
@@ -771,9 +771,13 @@ public class Account {
         Message[] messages = Account.getMessages(ID);
         for (Message message : messages) {
             if (ID.equals(message.getSenderID())) {
-                IDset.add(message.getRecipientID());
+                if (!Account.userCantSeeUser(Account.toUserID(ID), Account.toUserID(message.getRecipientID()))) {
+                    IDset.add(message.getRecipientID());
+                }
             } else if (ID.equals(message.getRecipientID())) {
-                IDset.add(message.getSenderID());
+                if (!Account.userCantSeeUser(Account.toUserID(ID), Account.toUserID(message.getSenderID()))) {
+                    IDset.add(message.getSenderID());
+                }
             }
         }
         String[] conversationsWith = new String[IDset.size()];

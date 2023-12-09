@@ -505,7 +505,7 @@ class StoreApplication extends JFrame implements ActionListener {
         JPanel blockingInvisibilityPanel = new JPanel();
         blockingInvisibilityPanel.setLayout(new FlowLayout());
 
-        blockRecipientButton = new JButton("Block");
+        blockRecipientButton = new JButton("Toggle Block");
         blockRecipientButton.setPreferredSize(new Dimension(100, 40));
         blockRecipientButton.addActionListener(StoreApplication.this);
 
@@ -774,20 +774,20 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
-        Account.resetAccountsData();
-        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
-        Message.createMessage("0", "2", "Hello!");
-        Message.createMessage("2", "0", "Hi.");
-        Message.createMessage("0", "4", "Hi.");
-        Message.createMessage("0", "1", "Hello.");
+//        Account.resetAccountsData();
+//        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
+//        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
+//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
+//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
+//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
+//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
+//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
+//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
+//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
+//        Message.createMessage("0", "2", "Hello!");
+//        Message.createMessage("2", "0", "Hi.");
+//        Message.createMessage("0", "4", "Hi.");
+//        Message.createMessage("0", "1", "Hello.");
     }
 
     @Override
@@ -958,8 +958,18 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println(recipientSelection.getSelectedItem());
             writer.flush();
 
-            JOptionPane.showMessageDialog(null, "Recipient Blocked!", "Conversations",
-                    JOptionPane.INFORMATION_MESSAGE);
+            try {
+                String response = reader.readLine();
+                if (response.equals("Blocked")) {
+                    JOptionPane.showMessageDialog(null, "User blocked!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else if (response.equals("Unblocked")) {
+                    JOptionPane.showMessageDialog(null, "User unblocked!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
         }
 
         if (e.getSource() == appearInvisibleToRecipientButton) {
@@ -968,8 +978,18 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println(recipientSelection.getSelectedItem());
             writer.flush();
 
-            JOptionPane.showMessageDialog(null, "You are now invisible to this recipient", "Conversations",
-                    JOptionPane.INFORMATION_MESSAGE);
+            try {
+                String response = reader.readLine();
+                if (response.equals("Invisible")) {
+                    JOptionPane.showMessageDialog(null, "You are now invisible to this user!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else if (response.equals("Visible")) {
+                    JOptionPane.showMessageDialog(null, "You are now visible to this user!", "Conversations",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
         }
 
         if (e.getSource() == signUpButton) {
@@ -1121,7 +1141,17 @@ class StoreApplication extends JFrame implements ActionListener {
         }
         if (e.getSource() == addRecipientButton) {
             Object recipientName = searchUserResults.getSelectedItem();
-            recipientSelection.addItem(recipientName);
+            boolean itemExists = false;
+            for (int i = 0; i < recipientSelection.getItemCount(); i++) {
+                if (recipientSelection.getItemAt(i).equals(recipientName)) {
+                    itemExists = true;
+                }
+            }
+            if (!itemExists) {
+                recipientSelection.addItem(recipientName);
+            }
+
+            recipientSelection.setSelectedItem(recipientName);
 
             writer.println("Conversation");
             writer.println(conversationID);
