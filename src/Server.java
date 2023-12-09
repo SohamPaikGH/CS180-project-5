@@ -19,6 +19,7 @@ public class Server extends Thread {
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
                 String command = reader.readLine();
+                System.out.println(command);
                 if (command.equals("Log In")) {
                     String username = reader.readLine();
                     String password = reader.readLine();
@@ -109,13 +110,12 @@ public class Server extends Thread {
                     }
                     writer.flush();
                 } else if (command.equals("Send Message As Store")) {
-                    String ID = reader.readLine();
-                    String storeID = Account.IDofStorename(reader.readLine());
+                    String storeID = reader.readLine();
                     String recipientID = Account.IDofUsername(reader.readLine());
                     String message = reader.readLine();
                     if (recipientID == null) {
                         writer.println("Failure");
-                    } else if (Account.userBlockedByUser(ID, recipientID)) {
+                    } else if (Account.userBlockedByUser(storeID, recipientID)) {
                         writer.println("Blocked");
                     } else {
                         Message.createMessage(storeID, recipientID, message);
@@ -243,6 +243,23 @@ public class Server extends Thread {
                     } else {
                         Message.deleteMessage(selectedMessage.getSenderID(), selectedMessage.getRecipientID(), selectedMessage.getOrder());
                     }
+                } else if (command.equals("Seller View Options")) {
+                    String ID = reader.readLine();
+                    writer.println(Account.getUsername(ID));
+                    Store[] stores = Account.getStores(ID);
+                    writer.println(stores.length);
+                    for (Store store : stores) {
+                        writer.println(store.getName());
+                    }
+                    writer.flush();
+                } else if (command.equals("Get ID")) {
+                    String name = reader.readLine();
+                    String ID = Account.IDofUsername(name);
+                    if (ID == null) {
+                        ID = Account.IDofStorename(name);
+                    }
+                    writer.println(ID);
+                    writer.flush();
                 }
             }
         } catch (IOException e) {

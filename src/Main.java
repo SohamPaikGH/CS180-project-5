@@ -67,6 +67,9 @@ class StoreApplication extends JFrame implements ActionListener {
     JButton selectRecipientButton = new JButton("Select Recipient");
     JTable jTable1;
     TableModel tableModel;
+    JComboBox sellerViewSelect;
+    String conversationID;
+    JButton selectViewButton;
 
     public JTable getjTable1() {
         return jTable1;
@@ -235,8 +238,26 @@ class StoreApplication extends JFrame implements ActionListener {
                 }
 
                 if (tabIndex == 1) {
+                    if (role.equals("Seller")) {
+                        sellerViewSelect.removeAllItems();
+                        writer.println("Seller View Options");
+                        writer.println(ID);
+                        writer.flush();
+
+                        try {
+                            sellerViewSelect.addItem(reader.readLine());
+                            int storeCount = Integer.parseInt(reader.readLine());
+                            for (int i = 0; i < storeCount; i++) {
+                                sellerViewSelect.addItem(reader.readLine());
+                            }
+                        } catch (IOException ee) {
+                            ee.printStackTrace();
+                        }
+
+                    }
+
                     writer.println("Get Conversations");
-                    writer.println(ID);
+                    writer.println(conversationID);
                     writer.flush();
 
                     recipientSelection.removeAllItems();
@@ -379,6 +400,33 @@ class StoreApplication extends JFrame implements ActionListener {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+        if (role.equals("Seller")) {
+            sellerViewSelect = new JComboBox();
+            writer.println("Seller View Options");
+            writer.println(ID);
+            writer.flush();
+
+            try {
+                sellerViewSelect.addItem(reader.readLine());
+                int storeCount = Integer.parseInt(reader.readLine());
+                for (int i = 0; i < storeCount; i++) {
+                    sellerViewSelect.addItem(reader.readLine());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = 0;
+            c.gridy = 0;
+            panel.add(sellerViewSelect, c);
+
+            selectViewButton = new JButton("Select View");
+            selectViewButton.addActionListener(StoreApplication.this);
+            c.gridx = 1;
+            panel.add(selectViewButton, c);
+        }
+
         // Create message area
 
         msgArea = new JTextArea(null, 20, 60);
@@ -387,7 +435,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 1;
         panel.add(msgScrollPane, c);
 
         // Create sub-panel for dropdown menu that lets user select recipient
@@ -405,7 +453,7 @@ class StoreApplication extends JFrame implements ActionListener {
         recipientSelection.addActionListener(StoreApplication.this);
 
         writer.println("Get Conversations");
-        writer.println(ID);
+        writer.println(conversationID);
         writer.flush();
 
         recipientSelection.removeAllItems();
@@ -431,7 +479,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         panel.add(recipientPanel, c);
 
         // Create sub-panel for text field and button to send message
@@ -449,7 +497,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         panel.add(messagePanel, c);
 
         // Create sub-panel for blocking and invisibility features
@@ -470,7 +518,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 4;
         panel.add(blockingInvisibilityPanel, c);
 
         return panel;
@@ -740,7 +788,6 @@ class StoreApplication extends JFrame implements ActionListener {
         Message.createMessage("2", "0", "Hi.");
         Message.createMessage("0", "4", "Hi.");
         Message.createMessage("0", "1", "Hello.");
-        Account.block("4", "0");
     }
 
     @Override
@@ -764,6 +811,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 String line = reader.readLine();
                 if (line.equals("Success")) {
                     ID = reader.readLine();
+                    conversationID = ID;
                     role = reader.readLine();
 
                     if ( role.equals("Customer") ) {
@@ -832,8 +880,12 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == sendMessageButton) {
-            writer.println("Send Message");
-            writer.println(ID);
+            if (role.equals("Seller") && !ID.equals(conversationID)) {
+                writer.println("Send Message As Store");
+            } else {
+                writer.println("Send Message");
+            }
+            writer.println(conversationID);
             writer.println(String.valueOf(recipientSelection.getSelectedItem()));
             writer.println(messageField.getText());
             writer.flush();
@@ -844,17 +896,19 @@ class StoreApplication extends JFrame implements ActionListener {
                 if ( response.equals("Success") ) {
 
                     String recipientName = String.valueOf(recipientSelection.getSelectedItem());
-                    writer.println("Conversation");
-                    writer.println(ID);
-                    writer.println(recipientName);
-                    writer.flush();
+                    if (!recipientName.isEmpty()) {
+                        writer.println("Conversation");
+                        writer.println(conversationID);
+                        writer.println(recipientName);
+                        writer.flush();
 
-                    String messageCountLine = reader.readLine();
-                    int messageCount = Integer.parseInt(messageCountLine);
+                        String messageCountLine = reader.readLine();
+                        int messageCount = Integer.parseInt(messageCountLine);
 
-                    msgArea.setText(null);
-                    for (int i = 0; i < messageCount; i++) {
-                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                        msgArea.setText(null);
+                        for (int i = 0; i < messageCount; i++) {
+                            msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                        }
                     }
 
                 } else if ( response.equals("Blocked") ) {
@@ -1044,22 +1098,24 @@ class StoreApplication extends JFrame implements ActionListener {
         }
         if ( e.getSource() == selectRecipientButton ) {
             String recipientName = String.valueOf(recipientSelection.getSelectedItem());
-            writer.println("Conversation");
-            writer.println(ID);
-            writer.println(recipientName);
-            writer.flush();
+            if (!recipientName.isEmpty()) {
+                writer.println("Conversation");
+                writer.println(conversationID);
+                writer.println(recipientName);
+                writer.flush();
 
-            try {
-                String messageCountLine = reader.readLine();
-                int messageCount = Integer.parseInt(messageCountLine);
+                try {
+                    String messageCountLine = reader.readLine();
+                    int messageCount = Integer.parseInt(messageCountLine);
 
-                msgArea.setText(null);
-                for (int i = 0; i < messageCount; i++) {
-                    msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                    msgArea.setText(null);
+                    for (int i = 0; i < messageCount; i++) {
+                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                    }
+
+                } catch (IOException exception) {
+                    exception.printStackTrace();
                 }
-
-            } catch (IOException exception) {
-                exception.printStackTrace();
             }
 
         }
@@ -1068,7 +1124,7 @@ class StoreApplication extends JFrame implements ActionListener {
             recipientSelection.addItem(recipientName);
 
             writer.println("Conversation");
-            writer.println(ID);
+            writer.println(conversationID);
             writer.println(recipientName.toString());
             writer.flush();
 
@@ -1087,6 +1143,53 @@ class StoreApplication extends JFrame implements ActionListener {
                 exception.printStackTrace();
             }
 
+        }
+
+        if (e.getSource() == selectViewButton) {
+            String choice = sellerViewSelect.getSelectedItem().toString();
+            writer.println("Get ID");
+            writer.println(choice);
+            writer.flush();
+            try {
+                conversationID = reader.readLine();
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
+///
+            writer.println("Get Conversations");
+            writer.println(conversationID);
+            writer.flush();
+
+            recipientSelection.removeAllItems();
+            try {
+                int namesCount = Integer.parseInt(reader.readLine());
+                for (int i = 0; i < namesCount; i++) {
+                    recipientSelection.addItem(reader.readLine());
+                }
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
+///
+            String recipientName = String.valueOf(recipientSelection.getSelectedItem());
+            if (!recipientName.isEmpty()) {
+                writer.println("Conversation");
+                writer.println(conversationID);
+                writer.println(recipientName);
+                writer.flush();
+
+                try {
+                    String messageCountLine = reader.readLine();
+                    int messageCount = Integer.parseInt(messageCountLine);
+
+                    msgArea.setText(null);
+                    for (int i = 0; i < messageCount; i++) {
+                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                    }
+
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
         }
     }
 }
