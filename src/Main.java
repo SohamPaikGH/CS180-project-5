@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -45,7 +44,8 @@ class StoreApplication extends JFrame implements ActionListener {
     JFrame storeCreationWindow, frame2;
     boolean loginCompleted = false;
     boolean connectedToServer = false;
-    JTextArea msgArea;
+//    JTextArea msgArea;
+    JTable msgTable;
     JTextField textField1;
 
     // if true, user is customer; if false, user is seller
@@ -217,6 +217,12 @@ class StoreApplication extends JFrame implements ActionListener {
                     jTable1.setModel(tableModel1);
 
                     if (!isCustomer) {
+                        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                        jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+                        jTable1.getColumnModel().getColumn(1).setPreferredWidth(550);
+                        jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+                        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
                         jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -228,6 +234,12 @@ class StoreApplication extends JFrame implements ActionListener {
                                 "Delete Store"));
 
                     } else {
+                        jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                        jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+                        jTable1.getColumnModel().getColumn(1).setPreferredWidth(450);
+                        jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
+                        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
                         jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -429,9 +441,12 @@ class StoreApplication extends JFrame implements ActionListener {
 
         // Create message area
 
-        msgArea = new JTextArea(null, 20, 60);
-        JScrollPane msgScrollPane = new JScrollPane(msgArea);
-        msgArea.setEditable(false);
+//        msgArea = new JTextArea(null, 20, 60);
+        msgTable = new JTable();
+        TableModel msgDataTable = getMessagesTable(null);
+        msgTable.setModel(msgDataTable);
+        JScrollPane msgScrollPane = new JScrollPane(msgTable);
+//        msgArea.setEditable(false);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -524,20 +539,17 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
-//    public TableModel getMessagesTable() {
-//        String[] columnNames;
-//        Object[][] data = null;
-//
-//        TableModel tableModel1 = new DefaultTableModel(data, columnNames) {
-//            public boolean isCellEditable(int row, int column) {
-//                if (role.equals("Customer")) {
-//                    return column == 3;
-//                } else {
-//                    return true;
-//                }
-//            }
-//        }
-//    }
+    public TableModel getMessagesTable(Object[][] data) {
+        String[] columnNames = {"Sender", "Message", "Actions", "Actions"};
+
+        TableModel tableModel1 = new DefaultTableModel(data, columnNames) {
+            public boolean isCellEditable(int row, int column) {
+                return column != 0;
+            }
+        };
+
+        return tableModel1;
+    }
 
     protected JComponent createDashboardPane() {
         JPanel panel = new JPanel();
@@ -932,10 +944,15 @@ class StoreApplication extends JFrame implements ActionListener {
                         String messageCountLine = reader.readLine();
                         int messageCount = Integer.parseInt(messageCountLine);
 
-                        msgArea.setText(null);
+                        Object[][] messageData = new Object[messageCount][4];
                         for (int i = 0; i < messageCount; i++) {
-                            msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                            messageData[i][0] = reader.readLine();
+                            messageData[i][1] = reader.readLine();
                         }
+
+                        TableModel messagesDataTable = getMessagesTable(messageData);
+                        msgTable.setModel(messagesDataTable);
+
                     }
 
                 } else if ( response.equals("Blocked") ) {
@@ -1093,6 +1110,11 @@ class StoreApplication extends JFrame implements ActionListener {
                     jTable1.setModel(tableModel1);
 
                     if (!isCustomer) {
+                        jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+                        jTable1.getColumnModel().getColumn(1).setPreferredWidth(550);
+                        jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+                        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
                         jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -1104,6 +1126,11 @@ class StoreApplication extends JFrame implements ActionListener {
                                 "Delete Store"));
 
                     } else {
+                        jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+                        jTable1.getColumnModel().getColumn(1).setPreferredWidth(450);
+                        jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
+                        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
                         jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -1155,10 +1182,14 @@ class StoreApplication extends JFrame implements ActionListener {
                     String messageCountLine = reader.readLine();
                     int messageCount = Integer.parseInt(messageCountLine);
 
-                    msgArea.setText(null);
+                    Object[][] messageData = new Object[messageCount][4];
                     for (int i = 0; i < messageCount; i++) {
-                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                        messageData[i][0] = reader.readLine();
+                        messageData[i][1] = reader.readLine();
                     }
+
+                    TableModel messagesDataTable = getMessagesTable(messageData);
+                    msgTable.setModel(messagesDataTable);
 
                 } catch (IOException exception) {
                     exception.printStackTrace();
@@ -1189,10 +1220,14 @@ class StoreApplication extends JFrame implements ActionListener {
                 String messageCountLine = reader.readLine();
                 int messageCount = Integer.parseInt(messageCountLine);
 
-                msgArea.setText(null);
+                Object[][] messageData = new Object[messageCount][4];
                 for (int i = 0; i < messageCount; i++) {
-                    msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                    messageData[i][0] = reader.readLine();
+                    messageData[i][1] = reader.readLine();
                 }
+
+                TableModel messagesDataTable = getMessagesTable(messageData);
+                msgTable.setModel(messagesDataTable);
 
                 frame2.setVisible(false);
 
@@ -1238,10 +1273,14 @@ class StoreApplication extends JFrame implements ActionListener {
                     String messageCountLine = reader.readLine();
                     int messageCount = Integer.parseInt(messageCountLine);
 
-                    msgArea.setText(null);
+                    Object[][] messageData = new Object[messageCount][4];
                     for (int i = 0; i < messageCount; i++) {
-                        msgArea.append(reader.readLine() + ": " + reader.readLine() + "\n");
+                        messageData[i][0] = reader.readLine();
+                        messageData[i][1] = reader.readLine();
                     }
+
+                    TableModel messagesDataTable = getMessagesTable(messageData);
+                    msgTable.setModel(messagesDataTable);
 
                 } catch (IOException exception) {
                     exception.printStackTrace();
@@ -1249,172 +1288,4 @@ class StoreApplication extends JFrame implements ActionListener {
             }
         }
     }
-}
-
-class ButtonRenderer extends JButton implements TableCellRenderer {
-
-    public ButtonRenderer() {
-        setOpaque(true);
-    }
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Button.background"));
-        }
-        setText((value==null) ? "":value.toString());
-        return this;
-    }
-}
-
-class ButtonEditor extends DefaultCellEditor {
-    protected JButton btn;
-    private String lbl;
-    private boolean clicked;
-    String action;
-    StoreApplication storeApplication;
-    String newStoreName;
-    String newStoreDesc;
-
-    public ButtonEditor(JCheckBox checkBox, StoreApplication storeApplication, String action) {
-        super(checkBox);
-
-        this.storeApplication = storeApplication;
-        this.action = action;
-
-        btn = new JButton();
-        btn.setOpaque(true);
-
-        btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-            }
-        });
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (isSelected) {
-            btn.setForeground(table.getSelectionForeground());
-            btn.setBackground(table.getSelectionBackground());
-        } else {
-            btn.setForeground(table.getForeground());
-            btn.setBackground(table.getBackground());
-        }
-        lbl = (value==null) ? "": value.toString();
-        btn.setText(lbl);
-        clicked = true;
-
-        return btn;
-    }
-
-    @Override
-    public Object getCellEditorValue() {
-
-        if (clicked) {
-
-            if (storeApplication.isCustomer) {
-
-                if (action.equals("Contact Store")) {
-                    EventQueue.invokeLater(storeApplication::createStoreContactWindow);
-                }
-
-            } else {
-                
-                if (action.equals("Save Store Data")) {
-                    int row = storeApplication.getjTable1().getSelectedRow();
-                    newStoreName = storeApplication.getjTable1().getValueAt(row, 0).toString();
-                    newStoreDesc = storeApplication.getjTable1().getValueAt(row, 1).toString();
-
-                    storeApplication.writer.println("Save Store Data");
-                    System.out.println("Save Store Data");
-                    storeApplication.writer.println(storeApplication.ID);
-                    storeApplication.writer.println(row);
-                    storeApplication.writer.println(newStoreName);
-                    storeApplication.writer.println(newStoreDesc);
-                    storeApplication.writer.flush();
-
-                    try {
-                        String line = storeApplication.reader.readLine();
-
-                        if (line.equals("Success")) {
-                            JOptionPane.showMessageDialog(null, "Success!", "Message",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                        } else if (line.equals("Name Exists")) {
-                            JOptionPane.showMessageDialog(null, "Name already exists. Please try again!", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            
-                        } else if (line.equals("Name Blank")) {
-                            JOptionPane.showMessageDialog(null, "Name is blank. Please try again!", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } else if (action.equals("Delete Store")) {
-                    int row = storeApplication.getjTable1().getSelectedRow();
-                    System.out.println(row);
-
-                    storeApplication.writer.println("Delete Store");
-                    storeApplication.writer.println(storeApplication.ID);
-                    storeApplication.writer.println(row);
-                    storeApplication.writer.flush();
-
-                    JOptionPane.showMessageDialog(null, "Store deleted!", "Message",
-                            JOptionPane.INFORMATION_MESSAGE);
-
-                    TableModel tableModel1 = storeApplication.getTableModel();
-                    storeApplication.jTable1.setModel(tableModel1);
-
-                    if (!storeApplication.isCustomer) {
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
-                                storeApplication,
-                                "Save Store Data"));
-
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
-                                storeApplication,
-                                "Delete Store"));
-
-                    } else {
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
-                                storeApplication,
-                                "Contact Store"));
-                    }
-                    storeApplication.jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
-
-
-                }
-
-            }
-
-        }
-        clicked = false;
-        return lbl;
-    }
-    public Object getCellEditorValue2() {
-
-        if (clicked) {
-            EventQueue.invokeLater(storeApplication::createSearchUserWindow);
-
-        }
-        clicked = false;
-        return lbl;
-    }
-
-    @Override
-    public boolean stopCellEditing() {
-        clicked = false;
-        return super.stopCellEditing();
-    }
-
 }
