@@ -138,20 +138,34 @@ public class Server extends Thread {
                     writer.flush();
                 } else if (command.equals("Toggle Block")) {
                     String ID = reader.readLine();
-                    String blockID = reader.readLine();
+                    String block = reader.readLine();
+                    String blockID = Account.IDofUsername(block);
+                    if (blockID == null) {
+                        blockID = Account.toUserID(Account.IDofStorename(block));
+                    }
                     if (Account.userBlockedByUser(blockID, ID)) {
                         Account.unblock(ID, blockID);
+                        writer.println("Unblocked");
                     } else {
                         Account.block(ID, blockID);
+                        writer.println("Blocked");
                     }
+                    writer.flush();
                 } else if (command.equals("Toggle Invisible")) {
                     String ID = reader.readLine();
-                    String invisibleID = reader.readLine();
-                    if (Account.userCantSeeUser(invisibleID, ID)) {
-                        Account.unblock(ID, invisibleID);
-                    } else {
-                        Account.block(ID, invisibleID);
+                    String invisible = reader.readLine();
+                    String invisibleID = Account.IDofUsername(invisible);
+                    if (invisibleID == null) {
+                        invisibleID = Account.toUserID(Account.IDofStorename(invisible));
                     }
+                    if (Account.userCantSeeUser(invisibleID, ID)) {
+                        Account.uninvisible(ID, invisibleID);
+                        writer.println("Visible");
+                    } else {
+                        Account.invisible(ID, invisibleID);
+                        writer.println("Invisible");
+                    }
+                    writer.flush();
                 } else if (command.equals("Search Users")) {
                     String ID = reader.readLine();
                     String searchString = reader.readLine();
