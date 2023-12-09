@@ -357,7 +357,22 @@ public class Account {
      * @return messages
      */
     public static Message[] getMessages(String ID) {
-        return accountWithID(ID).messages;
+        if (Integer.parseInt(ID) % 2 == 0) {
+            return accountWithID(ID).messages;
+        } else {
+            Message[] messages = accountWithID(Account.toUserID(ID)).messages;
+            ArrayList<Message> storeMessagesList = new ArrayList<>();
+            for (Message message : messages) {
+                if (message.getSenderID().equals(ID) || message.getRecipientID().equals(ID)) {
+                    storeMessagesList.add(message);
+                }
+            }
+            Message[] storeMessages = new Message[storeMessagesList.size()];
+            for (int i = 0; i < storeMessages.length; i++) {
+                storeMessages[i] = storeMessagesList.get(i);
+            }
+            return storeMessages;
+        }
     }
 
     /**
@@ -757,7 +772,7 @@ public class Account {
         for (Message message : messages) {
             if (ID.equals(message.getSenderID())) {
                 IDset.add(message.getRecipientID());
-            } else {
+            } else if (ID.equals(message.getRecipientID())) {
                 IDset.add(message.getSenderID());
             }
         }
