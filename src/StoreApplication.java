@@ -59,7 +59,7 @@ class StoreApplication extends JFrame implements ActionListener {
     PrintWriter writer;
     String ID;
     String role;
-    String[] recipientNames;
+    String recipientName;
     JTextField userSearchField;
     JComboBox recipientSelection;
     JComboBox<String> searchUserResults;
@@ -935,7 +935,6 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 if ( response.equals("Success") ) {
 
-                    String recipientName = String.valueOf(recipientSelection.getSelectedItem());
                     if (!recipientName.isEmpty()) {
                         writer.println("Conversation");
                         writer.println(conversationID);
@@ -1192,7 +1191,7 @@ class StoreApplication extends JFrame implements ActionListener {
             }
         }
         if ( e.getSource() == selectRecipientButton ) {
-            String recipientName = String.valueOf(recipientSelection.getSelectedItem());
+            recipientName = String.valueOf(recipientSelection.getSelectedItem());
             if (!recipientName.isEmpty()) {
                 writer.println("Conversation");
                 writer.println(conversationID);
@@ -1240,7 +1239,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == addRecipientButton) {
-            Object recipientName = searchUserResults.getSelectedItem();
+            recipientName = (String) searchUserResults.getSelectedItem();
             boolean itemExists = false;
             for (int i = 0; i < recipientSelection.getItemCount(); i++) {
                 if (recipientSelection.getItemAt(i).equals(recipientName)) {
@@ -1255,7 +1254,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
             writer.println("Conversation");
             writer.println(conversationID);
-            writer.println(recipientName.toString());
+            writer.println(recipientName);
             writer.flush();
 
             try {
