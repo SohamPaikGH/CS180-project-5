@@ -524,6 +524,21 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
+//    public TableModel getMessagesTable() {
+//        String[] columnNames;
+//        Object[][] data = null;
+//
+//        TableModel tableModel1 = new DefaultTableModel(data, columnNames) {
+//            public boolean isCellEditable(int row, int column) {
+//                if (role.equals("Customer")) {
+//                    return column == 3;
+//                } else {
+//                    return true;
+//                }
+//            }
+//        }
+//    }
+
     protected JComponent createDashboardPane() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -547,6 +562,12 @@ class StoreApplication extends JFrame implements ActionListener {
         jTable1.setModel(tableModel);
 
         if (!isCustomer) {
+            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(550);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
             jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
             jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this,
                     "Save Store Data"));
@@ -556,6 +577,12 @@ class StoreApplication extends JFrame implements ActionListener {
                     "Delete Store"));
 
         } else {
+            jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(450);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+
             jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
             jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), this,
                     "Contact Store"));
