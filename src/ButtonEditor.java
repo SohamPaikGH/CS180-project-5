@@ -51,8 +51,66 @@ class ButtonEditor extends DefaultCellEditor {
     public Object getCellEditorValue() {
 
         if (clicked) {
+            if (action.equals("Edit Message") || action.equals("Delete Message")) {
+                if (!storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(), 0).equals(storeApplication.recipientSelection.getSelectedItem())) {
+                    if (action.equals("Edit Message")) {
+                        storeApplication.writer.println("Edit Message");
+                        storeApplication.writer.println(storeApplication.conversationID);
+                        storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                        storeApplication.writer.println(storeApplication.msgTable.getSelectedRow());
+                        storeApplication.writer.println(storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(), 1));
+                        storeApplication.writer.flush();
+                    } else {
+                        storeApplication.writer.println("Delete Message");
+                        storeApplication.writer.println(storeApplication.conversationID);
+                        storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                        storeApplication.writer.println(storeApplication.msgTable.getSelectedRow());
+                        storeApplication.writer.flush();
+                    }
+                }
+                storeApplication.writer.println("Conversation");
+                storeApplication.writer.println(storeApplication.conversationID);
+                storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                storeApplication.writer.flush();
 
-            if (storeApplication.isCustomer) {
+                try {
+                    String messageCountLine = storeApplication.reader.readLine();
+                    int messageCount = Integer.parseInt(messageCountLine);
+
+                    Object[][] messageData = new Object[messageCount][4];
+                    for (int i = 0; i < messageCount; i++) {
+                        messageData[i][0] = storeApplication.reader.readLine();
+                        messageData[i][1] = storeApplication.reader.readLine();
+                        if (!messageData[i][0].equals(storeApplication.recipientSelection.getSelectedItem())) {
+                            messageData[i][2] = "Edit";
+                            messageData[i][3] = "Delete";
+                        }
+                    }
+
+                    TableModel messagesDataTable = storeApplication.getMessagesTable(messageData);
+                    storeApplication.msgTable.setModel(messagesDataTable);
+
+                    storeApplication.msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                    storeApplication.msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+                    storeApplication.msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+                    storeApplication.msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+                    storeApplication.msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                    storeApplication.msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            storeApplication,
+                            "Edit Message"));
+
+                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            storeApplication,
+                            "Delete Message"));
+
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else if (storeApplication.isCustomer) {
 
                 if (action.equals("Contact Store")) {
                     EventQueue.invokeLater(storeApplication::createStoreContactWindow);
@@ -139,9 +197,7 @@ class ButtonEditor extends DefaultCellEditor {
                     }
                     storeApplication.jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
-
                 }
-
             }
 
         }

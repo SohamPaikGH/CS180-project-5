@@ -441,12 +441,27 @@ class StoreApplication extends JFrame implements ActionListener {
 
         // Create message area
 
-//        msgArea = new JTextArea(null, 20, 60);
         msgTable = new JTable();
         TableModel msgDataTable = getMessagesTable(null);
         msgTable.setModel(msgDataTable);
         JScrollPane msgScrollPane = new JScrollPane(msgTable);
-//        msgArea.setEditable(false);
+
+        msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+        msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+        msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+        msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+        msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                StoreApplication.this,
+                "Edit Message"));
+
+        msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+        msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                StoreApplication.this,
+                "Delete Message"));
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -813,20 +828,6 @@ class StoreApplication extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
-//        Account.resetAccountsData();
-//        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-//        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
-//        Message.createMessage("0", "2", "Hello!");
-//        Message.createMessage("2", "0", "Hi.");
-//        Message.createMessage("0", "4", "Hi.");
-//        Message.createMessage("0", "1", "Hello.");
     }
 
     @Override
@@ -948,11 +949,31 @@ class StoreApplication extends JFrame implements ActionListener {
                         for (int i = 0; i < messageCount; i++) {
                             messageData[i][0] = reader.readLine();
                             messageData[i][1] = reader.readLine();
+                            if (!messageData[i][0].equals(recipientName)) {
+                                messageData[i][2] = "Edit";
+                                messageData[i][3] = "Delete";
+                            }
                         }
 
                         TableModel messagesDataTable = getMessagesTable(messageData);
                         msgTable.setModel(messagesDataTable);
 
+                        msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                        msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+                        msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+                        msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+                        msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                        msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+                        msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                        msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Edit Message"));
+
+                        msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                        msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                                StoreApplication.this,
+                                "Delete Message"));
                     }
 
                 } else if ( response.equals("Blocked") ) {
@@ -1186,10 +1207,31 @@ class StoreApplication extends JFrame implements ActionListener {
                     for (int i = 0; i < messageCount; i++) {
                         messageData[i][0] = reader.readLine();
                         messageData[i][1] = reader.readLine();
+                        if (!messageData[i][0].equals(recipientName)) {
+                            messageData[i][2] = "Edit";
+                            messageData[i][3] = "Delete";
+                        }
                     }
 
                     TableModel messagesDataTable = getMessagesTable(messageData);
                     msgTable.setModel(messagesDataTable);
+
+                    msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                    msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+                    msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+                    msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+                    msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                    msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+                    msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                    msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            StoreApplication.this,
+                            "Edit Message"));
+
+                    msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                    msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            StoreApplication.this,
+                            "Delete Message"));
 
                 } catch (IOException exception) {
                     exception.printStackTrace();
@@ -1224,10 +1266,31 @@ class StoreApplication extends JFrame implements ActionListener {
                 for (int i = 0; i < messageCount; i++) {
                     messageData[i][0] = reader.readLine();
                     messageData[i][1] = reader.readLine();
+                    if (!messageData[i][0].equals(recipientName)) {
+                        messageData[i][2] = "Edit";
+                        messageData[i][3] = "Delete";
+                    }
                 }
 
                 TableModel messagesDataTable = getMessagesTable(messageData);
                 msgTable.setModel(messagesDataTable);
+
+                msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+                msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+                msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+                msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+                msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        StoreApplication.this,
+                        "Edit Message"));
+
+                msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        StoreApplication.this,
+                        "Delete Message"));
 
                 frame2.setVisible(false);
 
@@ -1277,10 +1340,31 @@ class StoreApplication extends JFrame implements ActionListener {
                     for (int i = 0; i < messageCount; i++) {
                         messageData[i][0] = reader.readLine();
                         messageData[i][1] = reader.readLine();
+                        if (!messageData[i][0].equals(recipientName)) {
+                            messageData[i][2] = "Edit";
+                            messageData[i][3] = "Delete";
+                        }
                     }
 
                     TableModel messagesDataTable = getMessagesTable(messageData);
                     msgTable.setModel(messagesDataTable);
+
+                    msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                    msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
+                    msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+                    msgTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+                    msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+                    msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+                    msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
+                    msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            StoreApplication.this,
+                            "Edit Message"));
+
+                    msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
+                    msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                            StoreApplication.this,
+                            "Delete Message"));
 
                 } catch (IOException exception) {
                     exception.printStackTrace();
