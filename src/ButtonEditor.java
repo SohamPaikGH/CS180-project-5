@@ -56,21 +56,21 @@ class ButtonEditor extends DefaultCellEditor {
                     if (action.equals("Edit Message")) {
                         storeApplication.writer.println("Edit Message");
                         storeApplication.writer.println(storeApplication.conversationID);
-                        storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                        storeApplication.writer.println(storeApplication.recipientName);
                         storeApplication.writer.println(storeApplication.msgTable.getSelectedRow());
                         storeApplication.writer.println(storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(), 1));
                         storeApplication.writer.flush();
                     } else {
                         storeApplication.writer.println("Delete Message");
                         storeApplication.writer.println(storeApplication.conversationID);
-                        storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                        storeApplication.writer.println(storeApplication.recipientName);
                         storeApplication.writer.println(storeApplication.msgTable.getSelectedRow());
                         storeApplication.writer.flush();
                     }
                 }
                 storeApplication.writer.println("Conversation");
                 storeApplication.writer.println(storeApplication.conversationID);
-                storeApplication.writer.println(storeApplication.recipientSelection.getSelectedItem());
+                storeApplication.writer.println(storeApplication.recipientName);
                 storeApplication.writer.flush();
 
                 try {
@@ -81,7 +81,7 @@ class ButtonEditor extends DefaultCellEditor {
                     for (int i = 0; i < messageCount; i++) {
                         messageData[i][0] = storeApplication.reader.readLine();
                         messageData[i][1] = storeApplication.reader.readLine();
-                        if (!messageData[i][0].equals(storeApplication.recipientSelection.getSelectedItem())) {
+                        if (!messageData[i][0].equals(storeApplication.recipientName)) {
                             messageData[i][2] = "Edit";
                             messageData[i][3] = "Delete";
                         }
