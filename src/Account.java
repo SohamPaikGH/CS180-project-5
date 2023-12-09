@@ -718,7 +718,7 @@ public class Account {
         ArrayList<String> usernamesList = new ArrayList<>();
         for (Account account : accounts) {
             if (!(account.ID.equals(ID) || Account.userCantSeeUser(ID, account.ID))) {
-                if (account.username.contains(searchString) && !account.role.equals(Account.getRole(ID))) {
+                if (account.username.toLowerCase().contains(searchString.toLowerCase()) && !account.role.equals(Account.getRole(ID))) {
                     usernamesList.add(account.username);
                 }
             }
