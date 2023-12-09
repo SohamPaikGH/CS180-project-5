@@ -81,7 +81,7 @@ class ButtonEditor extends DefaultCellEditor {
                     for (int i = 0; i < messageCount; i++) {
                         messageData[i][0] = storeApplication.reader.readLine();
                         messageData[i][1] = storeApplication.reader.readLine();
-                        if (!messageData[i][0].equals(storeApplication.recipientName) {
+                        if (!messageData[i][0].equals(storeApplication.recipientName)) {
                             messageData[i][2] = "Edit";
                             messageData[i][3] = "Delete";
                         }
