@@ -19,63 +19,67 @@ import java.net.Socket;
  * server from the client are made by the StoreApplication object.
  *
  * @author Soham Paik, CS 180 Black
- * @version TBD
+ * @version December 10, 2023
  */
 class StoreApplication extends JFrame implements ActionListener {
-    String host = "localhost";
-    JPasswordField password;
-    JTextField username, usernameSetting, emailSetting, passwordSetting;
-    JLabel label_password, label_username, title;
+    String host = "localhost"; // IP Address of Host
+    JPasswordField password; // Password field used in the initial Sign In and Sign Up Pages
+    JTextField username, usernameSetting, emailSetting, passwordSetting; // Text fields that take input for username
+    // and email in the sign up page and Account Settings tab of the main application window
+    JLabel label_password, label_username, title; // Labels for text fields that take input for username and email
+
+    // signInButton allows user to sign in, signUpButton initializes the Sign Up window
+    // registerButton creates user's new account in Sign Up window
+    // blockRecipientButton and appearInvisibletoRecipientButtons toggle blocking and invisibility for users
+    // storeSendMessageButton and searchButton send messages to selected stores in dashboard and search for users
     JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
             signUpButton, registerButton, storeSendMessageButton, searchButton;
-    JButton saveButton = new JButton("Save");
-    JButton clearButton = new JButton("Clear");
-    JButton deleteAccountButton = new JButton("Delete Account");
-    JButton contactStoreButton = new JButton("Contact Store");
-    JButton sendMessageButton = new JButton("Send");
-    JButton searchUserButton = new JButton("Search User");
-    JButton createStoreButton = new JButton("Create Store");
-    JTextField storeName;
-    JTextField storeDesc;
-    JButton confirmStoreCreateButton;
-    JButton addRecipientButton = new JButton("Select Recipient");
-    JComboBox roleSetting;
-    JFrame storeCreationWindow, frame2;
-    boolean loginCompleted = false;
-    boolean connectedToServer = false;
-//    JTextArea msgArea;
-    JTable msgTable;
-    JTextField textField1;
+    JButton saveButton = new JButton("Save"); // Saves new username, email, and password in Account Settings tab
+    JButton clearButton = new JButton("Clear"); // Clears username, email, and password text fields in Account Settings
+    JButton deleteAccountButton = new JButton("Delete Account"); // Deletes account when pushed in Account Settings
+    JButton contactStoreButton = new JButton("Contact Store"); // Initializes the Contact Store window
+    JButton sendMessageButton = new JButton("Send"); // Sends message to specified store/user when clicked
+    JButton searchUserButton = new JButton("Search User"); // Initializes the Search User window in Conversations tab
+    JButton createStoreButton = new JButton("Create Store"); // Creates store owned by user when triggered
+    JTextField storeName; // Text field for taking input for store name
+    JTextField storeDesc; // Text field for taking input for store description
+    JButton confirmStoreCreateButton; // Creates store when triggered in the Store Creation window
+    JButton addRecipientButton = new JButton("Select Recipient"); // Selects recipient user in Conversations
+    JComboBox roleSetting; // Used in the Sign Up window to get input for user's role (Customer or Seller)
+    JFrame storeCreationWindow, searchUserFrame; // Windows for the Store Creation Window and the Search User Window
+    boolean connectedToServer = false; // verifies if user is connected to server
+    JTable msgTable; // displays all messages from selected recipient in a table in the Conversations tab
+    JTextField storeMessageField;  // Text field where user enters message they want to send to a store
 
-    // if true, user is customer; if false, user is seller
-    boolean isCustomer = false;
-    // Close sign-up window
-    boolean signUpDone;
-    JFrame signUpFrame, storeContactFrame;
-    // For networking purposes
-    Socket socket;
-    BufferedReader reader;
-    PrintWriter writer;
-    String ID;
-    String role;
-    String recipientName;
-    JTextField userSearchField;
-    JComboBox recipientSelection;
-    JComboBox<String> searchUserResults;
-    JTextField messageField;
+    boolean isCustomer = false; // if true, user is customer; if false, user is seller
+    JFrame signUpFrame, storeContactFrame; //  Sign Up and Store Contact Windows
+    Socket socket; // Used to create and manage connection between client and server
+    BufferedReader reader; // Reads data sent by server
+    PrintWriter writer; // Writes data to server
+    String ID; // Stores user's account ID
+    String role; // Stores user's role (e.g. Customer, Seller)
+    String recipientName; // Stores the name of the customer/seller/store the user wants to message
+    JTextField userSearchField; // Text field for storing user's search query in Search Users window
+    JComboBox recipientSelection; // Stores recipient user has currently messages
+    JComboBox<String> searchUserResults; // Displays all search results returned by customer query
+    JTextField messageField; // Text field to enter the message user wants to send to recipient in Conversations
+
+    // Adds recipient user chooses in Search Results to recipientSelection
     JButton selectRecipientButton = new JButton("Select Recipient");
-    JTable jTable1;
-    TableModel tableModel;
-    JComboBox sellerViewSelect;
-    String conversationID;
-    JButton selectViewButton;
-    JFrame mainFrame;
+    JTable jTable1; // Represents store dashboard table
+    TableModel tableModel; // Stores table model of the Store dashboard table
+    JComboBox sellerViewSelect; // Allows seller to message customers as a store
+    String conversationID; // Stores the ID of the conversation user has with another user
+    JButton selectViewButton; // Selects the view specified in sellerViewSelect
+    JFrame mainFrame; // Represents main application window
 
+    // Gets store dashboard table
     public JTable getjTable1() {
         return jTable1;
     }
 
     public StoreApplication() {
+        // Closes socket whenever user exits program
         this.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 writer.write("Close Socket");
@@ -83,12 +87,14 @@ class StoreApplication extends JFrame implements ActionListener {
                 System.exit(0);
             }
         });
+
+        // Initializes login page
         setSize(800,600);
         setTitle("Login");
         setLocationRelativeTo(null);
         setLayout(null);
 
-        // Establish connection
+        // Establishes connection to server
         try {
             socket = new Socket(host, 4242);
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -98,8 +104,7 @@ class StoreApplication extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
-        // Start login page
-
+        // Adds all required fields, buttons , and labels to login page
         label_username = new JLabel("Username");
         label_username.setBounds(200, 200, 100, 40);
 
@@ -127,11 +132,14 @@ class StoreApplication extends JFrame implements ActionListener {
         add(signInButton);
         add(signUpButton);
 
+        // Makes login window visible
         setResizable(false);
         setVisible(true);
     }
 
+    // Creates Sign Up page after user has hit the "Sign Up" button
     protected void initializeSignUpPage() {
+        // Creates the window and its properties (e.g. title, dimensions, layout)
         signUpFrame = new JFrame();
         signUpFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         signUpFrame.setSize(new Dimension(800, 600));
@@ -139,6 +147,7 @@ class StoreApplication extends JFrame implements ActionListener {
         signUpFrame.setLocationRelativeTo(null);
         signUpFrame.setLayout(null);
 
+        // Adds all required labels, fields, and buttons to window
         label_username = new JLabel("Username");
         label_username.setBounds(200, 200, 100, 40);
 
@@ -178,39 +187,51 @@ class StoreApplication extends JFrame implements ActionListener {
         signUpFrame.add(roleSetting);
         signUpFrame.add(registerButton);
 
+        // Makes Sign Up frame visible
         signUpFrame.setVisible(true);
         signUpFrame.setResizable(false);
     }
 
     protected void initializeApp() {
+        // Creates main application window and sets its dimensions to size of user window
         mainFrame = new JFrame("Store Application");
         mainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         mainFrame.setSize(size);
 
+        // Sets look and feel of the window to the default OS look
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // Creates a tabbed pane with three tabs and three panels
+        // Each panel represents one of the tabs
         JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Creates Stores dashboard tab
         JComponent panel1 = createDashboardPane();
-        tabbedPane.addTab("Dashboard", null, panel1);
+        tabbedPane.addTab("Stores", null, panel1);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
+        // Creates Conversations tab
         JComponent panel2 = createConversationsPane();
         tabbedPane.addTab("Conversations", null, panel2);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
+        // Creates Account Settings tab
         JComponent panel3 = createAccountSettingsPane();
         tabbedPane.addTab("Account", null, panel3);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
+        // Adds all tab to main window
         mainFrame.getContentPane().add(tabbedPane);
         mainFrame.setVisible(true);
         mainFrame.setResizable(true);
 
+        // Adds change listener to tabbed pane, so that window is automatically refreshed
+        // whenever user selects a different tab
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -318,11 +339,16 @@ class StoreApplication extends JFrame implements ActionListener {
 
     }
 
+    // Creates Account Settings tab
     protected JComponent createAccountSettingsPane() {
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel(false);
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+        // Client fetches the username, email, and password of the user from the server
+        // Then it fills the username, email, and password text fields with the suitable data it gets from server
         writer.println("Account Data");
         writer.println(ID);
         writer.flush();
@@ -338,6 +364,7 @@ class StoreApplication extends JFrame implements ActionListener {
             throw new RuntimeException(e);
         }
 
+        // Adds all required labels, buttons, and text fields using GridBagLayout
         JLabel usernameLbl = new JLabel("Username");
         usernameLbl.setPreferredSize(new Dimension(100, 40));
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -407,18 +434,23 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
-
+    // Creates Conversations tab
     protected JComponent createConversationsPane() {
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+        // Checks user's role and changes the number of columns and the column names of the
+        // Stores dashboard table accordingly
         if (role.equals("Seller")) {
             sellerViewSelect = new JComboBox();
             writer.println("Seller View Options");
             writer.println(ID);
             writer.flush();
 
+            // Gets all stores owned by seller and add them to sellerViewSelect
             try {
                 sellerViewSelect.addItem(reader.readLine());
                 int storeCount = Integer.parseInt(reader.readLine());
@@ -447,6 +479,7 @@ class StoreApplication extends JFrame implements ActionListener {
         msgTable.setModel(msgDataTable);
         JScrollPane msgScrollPane = new JScrollPane(msgTable);
 
+        // Sets dimensions of each column in the table
         msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -454,6 +487,7 @@ class StoreApplication extends JFrame implements ActionListener {
         msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
         msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+        // Adds buttons for editing and deleting messages to the last 2 columns of messages table
         msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
         msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                 StoreApplication.this,
@@ -469,12 +503,11 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(msgScrollPane, c);
 
-        // Create sub-panel for dropdown menu that lets user select recipient
-        // Create dropdown menu to select user to message
+        // Creates sub-panel for dropdown menu that lets user select recipient
+        // Creates dropdown menu to select user to message
+        // Add all necessary buttons and labels
         JPanel recipientPanel = new JPanel();
         recipientPanel.setLayout(new FlowLayout());
-
-
 
         JLabel recipientLbl = new JLabel("Recipient:");
         recipientLbl.setPreferredSize(new Dimension(100, 40));
@@ -487,6 +520,7 @@ class StoreApplication extends JFrame implements ActionListener {
         writer.println(conversationID);
         writer.flush();
 
+        // Remove all items if one of the recipients has deleted their account
         recipientSelection.removeAllItems();
         try {
             int namesCount = Integer.parseInt(reader.readLine());
@@ -555,6 +589,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
+    // Generates data for messages table
     public TableModel getMessagesTable(Object[][] data) {
         String[] columnNames = {"Sender", "Message", "Actions", "Actions"};
 
@@ -567,11 +602,15 @@ class StoreApplication extends JFrame implements ActionListener {
         return tableModel1;
     }
 
+    // Creates Dashboard pane
     protected JComponent createDashboardPane() {
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+        // Changes Stores Dashboard pane based on user role (e.g. Customer, Seller)
         if (isCustomer) {
             title = new JLabel("All Stores");
         } else {
@@ -583,6 +622,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 0;
         panel.add(title, c);
 
+        // Adds Store dashboard table to tab
         jTable1 = new JTable();
 
         tableModel = getTableModel();
@@ -617,6 +657,7 @@ class StoreApplication extends JFrame implements ActionListener {
         }
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
+        // Adds table to scroll pane, so the table is scrollable
         JScrollPane jScrollPane1 = new JScrollPane();
         jScrollPane1.setViewportView(jTable1);
         jScrollPane1.getViewport().setOpaque(true);
@@ -626,6 +667,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(jScrollPane1, c);
 
+        // If the user is a seller, add the button to create stores at the bottom of the tab
         if (!isCustomer) {
             createStoreButton.setPreferredSize(new Dimension(100, 40));
             createStoreButton.addActionListener(StoreApplication.this);
@@ -639,6 +681,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
+    // Generates table model for store dashboard pane
     public TableModel getTableModel() {
         String[] columnNames;
         Object[][] data = null;
@@ -690,9 +733,11 @@ class StoreApplication extends JFrame implements ActionListener {
         };
         return tableModel;
     }
+
+    // Creates the window for searching users to message
     public void createSearchUserWindow() {
-        frame2 = new JFrame("Search User");
-        frame2.setSize(new Dimension(300, 200));
+        searchUserFrame = new JFrame("Search User");
+        searchUserFrame.setSize(new Dimension(300, 200));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -732,10 +777,12 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(addRecipientButton, c);
 
-        frame2.getContentPane().add(BorderLayout.CENTER, panel);
-        frame2.setVisible(true);
-        frame2.setResizable(true);
+        searchUserFrame.getContentPane().add(BorderLayout.CENTER, panel);
+        searchUserFrame.setVisible(true);
+        searchUserFrame.setResizable(true);
     }
+
+    // Creates the window for contacting stores
     public void createStoreContactWindow() {
         storeContactFrame = new JFrame("Contact Store");
         storeContactFrame.setSize(new Dimension(300, 200));
@@ -758,11 +805,11 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(label1, c);
 
-        textField1 = new JTextField(20);
+        storeMessageField = new JTextField(20);
         c.gridx = 0;
         c.gridy = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(textField1, c);
+        panel.add(storeMessageField, c);
 
         storeSendMessageButton = new JButton("Send");
         storeSendMessageButton.addActionListener(StoreApplication.this);
@@ -777,6 +824,7 @@ class StoreApplication extends JFrame implements ActionListener {
         storeContactFrame.setResizable(true);
     }
 
+    // Creates the window for creating stores
     private void initializeStoreCreationWindow() {
         storeCreationWindow = new JFrame("Create Store");
         storeCreationWindow.setSize(new Dimension(300, 200));
@@ -826,14 +874,16 @@ class StoreApplication extends JFrame implements ActionListener {
         storeCreationWindow.setResizable(true);
     }
 
+    // Creates and runs a new StoreApplication object
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
     }
 
+    // Actions for all button action listeners used in the store application
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == signInButton) {
-
+            // When user signs in, connection to server is established
             try {
                 if (!connectedToServer || !socket.isConnected()) {
                     socket = new Socket(host, 4242);
@@ -842,12 +892,15 @@ class StoreApplication extends JFrame implements ActionListener {
                     connectedToServer = true;
                 }
 
+                // Login info sent to server
                 writer.println("Log In");
                 writer.println(username.getText());
                 writer.println(password.getPassword());
                 writer.flush();
 
-
+                // If login info is valid, server sends back confirmation and main app window is initialized
+                // Otherwise, the server tells client the login info is invalid, which causes an error message to pop up
+                // An error message will also pop up if the server is not up
                 String line = reader.readLine();
                 if (line.equals("Success")) {
                     ID = reader.readLine();
@@ -878,6 +931,9 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == saveButton) {
+            // Saves any changes made to account data
+
+            // Sends all user info for email, username, and password to server
             writer.println("Save Account Data");
             writer.println(ID);
             writer.println(usernameSetting.getText());
@@ -890,6 +946,11 @@ class StoreApplication extends JFrame implements ActionListener {
             } catch (IOException ee) {
                 ee.printStackTrace();
             }
+
+            // If all changes are successfully saved, server sends confirmation and client creates pop up to show
+            // user it worked
+            // Otherwise, based on what the server sends back, the client creates pop up that shows what the user did
+            // wrong
             if (line.equals("Success")) {
                 JOptionPane.showMessageDialog(null, "Saved.",
                         "Account Data", JOptionPane.INFORMATION_MESSAGE);
@@ -906,20 +967,24 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == clearButton) {
+            // Clears all fields in Account Settings
             usernameSetting.setText("");
             emailSetting.setText("");
             passwordSetting.setText("");
         }
 
         if (e.getSource() == contactStoreButton) {
+            // Opens store contact window
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
 
         if (e.getSource() == searchUserButton) {
+            // Opens search user window
             EventQueue.invokeLater(this::createSearchUserWindow );
         }
 
         if (e.getSource() == sendMessageButton) {
+            // Sends message to user
             if (role.equals("Seller") && !ID.equals(conversationID)) {
                 writer.println("Send Message As Store");
             } else {
@@ -994,7 +1059,7 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println("Send Message");
             writer.println(ID);
             writer.println(storeName);
-            writer.println(textField1.getText());
+            writer.println(storeMessageField.getText());
             writer.flush();
 
             try {
@@ -1293,7 +1358,7 @@ class StoreApplication extends JFrame implements ActionListener {
                         StoreApplication.this,
                         "Delete Message"));
 
-                frame2.setVisible(false);
+                searchUserFrame.setVisible(false);
 
             } catch (IOException exception) {
                 exception.printStackTrace();
