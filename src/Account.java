@@ -3,6 +3,16 @@ import java.util.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
+/**
+ * Account
+ *
+ * Class to deal with account data, such as editing and accessing
+ * I used Tutorialspoint to learn how to use json files in java
+ *
+ * @author Sean Kim, Soham Paik, Yash Patel, lab sec l17
+ *
+ * @version December 10, 2023
+ */
 public class Account {
     private String username;        // username
     private String email;           // email
@@ -48,12 +58,12 @@ public class Account {
      * @param role role
      */
     public static void createAccount(String username, String email, String password, String role) {
-        JSONObject newAccount = new JSONObject();
+        JSONObject newAccount = new JSONObject();   // new account json object
         newAccount.put("username", username);
         newAccount.put("email", email);
         newAccount.put("password", password);
         newAccount.put("role", role);
-        String ID = "";
+        String ID = "";     // ID of new account
         try (BufferedReader bfr = new BufferedReader(new FileReader("userIDIncrement.txt"))) {
             ID = bfr.readLine();
         } catch (IOException e) {
@@ -73,10 +83,10 @@ public class Account {
         newAccount.put("blocked", new JSONArray());
         newAccount.put("invisibleTo", new JSONArray());
 
-        JSONArray accountsJsonArray = new JSONArray();
-        JSONParser jsonParser = new JSONParser();
+        JSONArray accountsJsonArray = new JSONArray();  // json array to hold all the json account objects
+        JSONParser jsonParser = new JSONParser();   // to read the json file
         try (FileReader fr = new FileReader("accountsData.json")) {
-            Object obj = jsonParser.parse(fr);
+            Object obj = jsonParser.parse(fr);  // the main json array
             accountsJsonArray = (JSONArray) obj;
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,81 +109,83 @@ public class Account {
      * @return an array of account objects containing all the data from the json file
      */
     public static Account[] readAccountsData() {
-        ArrayList<Account> accountsList = new ArrayList<>();
+        ArrayList<Account> accountsList = new ArrayList<>();    // arraylist to hold accounts
 
-        JSONArray accountsJsonArray = new JSONArray();
-        JSONParser jsonParser = new JSONParser();
+        JSONArray accountsJsonArray = new JSONArray();  // json array to hold all json account objects
+        JSONParser jsonParser = new JSONParser();   // to read json file
         try (FileReader fr = new FileReader("accountsData.json")) {
-            Object obj = jsonParser.parse(fr);
+            Object obj = jsonParser.parse(fr);  // the main json array
             accountsJsonArray = (JSONArray) obj;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         for (Object objectAccount : accountsJsonArray) {
-            JSONObject jsonAccount = (JSONObject) objectAccount;
-            String username = (String) jsonAccount.get("username");
-            String email = (String) jsonAccount.get("email");
-            String password = (String) jsonAccount.get("password");
-            String role = (String) jsonAccount.get("role");
-            String ID = (String) jsonAccount.get("ID");
+            JSONObject jsonAccount = (JSONObject) objectAccount;    // json object of account
+            String username = (String) jsonAccount.get("username");     // username of account
+            String email = (String) jsonAccount.get("email");   // email of account
+            String password = (String) jsonAccount.get("password");     // password of account
+            String role = (String) jsonAccount.get("role");     // role of account
+            String ID = (String) jsonAccount.get("ID");     // ID of account
 
-            ArrayList<String> blockedList = new ArrayList<>();
+            ArrayList<String> blockedList = new ArrayList<>();  // blocked list of account
             for (Object objectBlockedID : (JSONArray) jsonAccount.get("blocked")) {
-                String blockedID = (String) objectBlockedID;
+                String blockedID = (String) objectBlockedID;    // blocked ID being read
                 blockedList.add(blockedID);
             }
-            String[] blocked = new String[blockedList.size()];
+            String[] blocked = new String[blockedList.size()];  // blocked array of account
             for (int i = 0; i < blockedList.size(); i++) {
                 blocked[i] = blockedList.get(i);
             }
 
-            ArrayList<String> invisibleToList = new ArrayList<>();
+            ArrayList<String> invisibleToList = new ArrayList<>();  // invisible to list of account
             for (Object objectInvisibleToID : (JSONArray) jsonAccount.get("invisibleTo")) {
-                String invisibleToID = (String) objectInvisibleToID;
+                String invisibleToID = (String) objectInvisibleToID;    // invisible to ID being read
                 invisibleToList.add(invisibleToID);
             }
-            String[] invisibleTo = new String[invisibleToList.size()];
+            String[] invisibleTo = new String[invisibleToList.size()];  // invisible to array of account
             for (int i = 0; i < invisibleToList.size(); i++) {
                 invisibleTo[i] = invisibleToList.get(i);
             }
 
-            ArrayList<Store> storesList = new ArrayList<>();
+            ArrayList<Store> storesList = new ArrayList<>();    // list of stores of the account
             for (Object objectStore : (JSONArray) jsonAccount.get("stores")) {
-                JSONObject jsonStore = (JSONObject) objectStore;
-                String storeName = (String) jsonStore.get("name");
-                String storeID = (String) jsonStore.get("ID");
-                String storeDescription = (String) jsonStore.get("description");
-                Store store = new Store(storeName, storeID, storeDescription);
+                JSONObject jsonStore = (JSONObject) objectStore;    // store json object being read
+                String storeName = (String) jsonStore.get("name");  // name of store
+                String storeID = (String) jsonStore.get("ID");      // ID of store
+                String storeDescription = (String) jsonStore.get("description");    // description of store
+                Store store = new Store(storeName, storeID, storeDescription);      // store object of the json object
                 storesList.add(store);
             }
-            Store[] stores = new Store[storesList.size()];
+            Store[] stores = new Store[storesList.size()];  // array of stores of the account
             for (int i = 0; i < storesList.size(); i++) {
                 stores[i] = storesList.get(i);
             }
 
-            ArrayList<Message> messagesList = new ArrayList<>();
+            ArrayList<Message> messagesList = new ArrayList<>();    // list of messages of the account
             for (Object objectMessage : (JSONArray) jsonAccount.get("messages")) {
-                JSONObject jsonMessage = (JSONObject) objectMessage;
-                String senderID = (String) jsonMessage.get("senderID");
-                String recipientID = (String) jsonMessage.get("recipientID");
-                String message = (String) jsonMessage.get("message");
-                boolean deletedForSender = (boolean) jsonMessage.get("deletedForSender");
-                boolean deletedForRecipient = (boolean) jsonMessage.get("deletedForRecipient");
-                long order = (long) jsonMessage.get("order");
-                Message messageObject = new Message(senderID, recipientID, message, deletedForSender, deletedForRecipient, order);
+                JSONObject jsonMessage = (JSONObject) objectMessage;    // message json object being read
+                String senderID = (String) jsonMessage.get("senderID");     // ID of sender of message
+                String recipientID = (String) jsonMessage.get("recipientID");   // ID of recipient of message
+                String message = (String) jsonMessage.get("message");   // message
+                boolean deletedForSender = (boolean) jsonMessage.get("deletedForSender");   // sender deleted
+                boolean deletedForRecipient = (boolean) jsonMessage.get("deletedForRecipient");  // recipient deleted
+                long order = (long) jsonMessage.get("order");   // order of message
+                Message messageObject = new Message(senderID, recipientID, message, deletedForSender,
+                        deletedForRecipient, order);    // message object of the json object
                 messagesList.add(messageObject);
             }
-            Message[] messages = new Message[messagesList.size()];
+            Message[] messages = new Message[messagesList.size()];  // array of messages of the account
             for (int i = 0; i < messagesList.size(); i++) {
                 messages[i] = messagesList.get(i);
             }
 
             Account account = new Account(username, email, password, role, ID, stores, messages, blocked, invisibleTo);
+            // account object of the json object
             accountsList.add(account);
         }
 
-        Account[] accounts = new Account[accountsList.size()];
+        Account[] accounts = new Account[accountsList.size()];  // array of accounts in the json array
         for (int i = 0; i < accountsList.size(); i++) {
             accounts[i] = accountsList.get(i);
         }
@@ -185,18 +197,18 @@ public class Account {
      * @param accounts array of accounts
      */
     public static void writeAccountsData(Account[] accounts) {
-        JSONArray accountsJsonArray = new JSONArray();
+        JSONArray accountsJsonArray = new JSONArray();  // new accounts json array
         for (Account account : accounts) {
-            JSONObject accountJsonObject = new JSONObject();
+            JSONObject accountJsonObject = new JSONObject();    // json account object
             accountJsonObject.put("username", account.username);
             accountJsonObject.put("email", account.email);
             accountJsonObject.put("password", account.password);
             accountJsonObject.put("role", account.role);
             accountJsonObject.put("ID", account.ID);
 
-            JSONArray storesArray = new JSONArray();
+            JSONArray storesArray = new JSONArray();    // json stores array of account
             for (Store store : account.stores) {
-                JSONObject storeJsonObject = new JSONObject();
+                JSONObject storeJsonObject = new JSONObject();  // json store object
                 storeJsonObject.put("name", store.getName());
                 storeJsonObject.put("ID", store.getID());
                 storeJsonObject.put("description", store.getDescription());
@@ -204,9 +216,9 @@ public class Account {
             }
             accountJsonObject.put("stores", storesArray);
 
-            JSONArray messagesArray = new JSONArray();
+            JSONArray messagesArray = new JSONArray();  // json messages array of account
             for (Message message : account.messages) {
-                JSONObject messageJsonObject = new JSONObject();
+                JSONObject messageJsonObject = new JSONObject();    // json message object
                 messageJsonObject.put("senderID", message.getSenderID());
                 messageJsonObject.put("recipientID", message.getRecipientID());
                 messageJsonObject.put("message", message.getMessage());
@@ -217,13 +229,13 @@ public class Account {
             }
             accountJsonObject.put("messages", messagesArray);
 
-            JSONArray blockedArray = new JSONArray();
+            JSONArray blockedArray = new JSONArray();   // json blocked array of account
             for (String blockedID : account.blocked) {
                 blockedArray.add(blockedID);
             }
             accountJsonObject.put("blocked", blockedArray);
 
-            JSONArray invisibleToArray = new JSONArray();
+            JSONArray invisibleToArray = new JSONArray();   // json invisible to array of account
             for (String invisibleToID : account.invisibleTo) {
                 invisibleToArray.add(invisibleToID);
             }
@@ -272,8 +284,8 @@ public class Account {
      * @return the account with the given ID
      */
     public static Account accountWithID(String ID) {
-        Account found = null;
-        Account[] accounts = readAccountsData();
+        Account found = null;   // account looking for
+        Account[] accounts = readAccountsData();    // accounts data
         for (Account account : accounts) {
             if (account.ID.equals(ID)) {
                 found = account;
@@ -289,8 +301,8 @@ public class Account {
      * @return the store with the given ID
      */
     public static Store storeWithID(String ID) {
-        Store found = null;
-        Account[] accounts = readAccountsData();
+        Store found = null;     // store looking for
+        Account[] accounts = readAccountsData();    // accounts data
         for (Account account : accounts) {
             for (Store store : account.stores) {
                 if (store.getID().equals(ID)) {
@@ -363,14 +375,14 @@ public class Account {
         if (Integer.parseInt(ID) % 2 == 0) {
             return accountWithID(ID).messages;
         } else {
-            Message[] messages = accountWithID(Account.toUserID(ID)).messages;
-            ArrayList<Message> storeMessagesList = new ArrayList<>();
+            Message[] messages = accountWithID(Account.toUserID(ID)).messages;  // messages of account
+            ArrayList<Message> storeMessagesList = new ArrayList<>();   // list of messages
             for (Message message : messages) {
                 if (message.getSenderID().equals(ID) || message.getRecipientID().equals(ID)) {
                     storeMessagesList.add(message);
                 }
             }
-            Message[] storeMessages = new Message[storeMessagesList.size()];
+            Message[] storeMessages = new Message[storeMessagesList.size()];    // array of messages of the store
             for (int i = 0; i < storeMessages.length; i++) {
                 storeMessages[i] = storeMessagesList.get(i);
             }
@@ -402,8 +414,8 @@ public class Account {
      * @param username the given username
      */
     public static void setUsername(String ID, String username) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
@@ -420,8 +432,8 @@ public class Account {
      * @param email the given username
      */
     public static void setEmail(String ID, String email) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
@@ -438,8 +450,8 @@ public class Account {
      * @param password the given password
      */
     public static void setPassword(String ID, String password) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
@@ -456,15 +468,15 @@ public class Account {
      * @param blockID the given blockID
      */
     public static void block(String ID, String blockID) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
                 break;
             }
         }
-        String[] newBlocked = new String[account.blocked.length + 1];
+        String[] newBlocked = new String[account.blocked.length + 1];   // new blocked array
         for (int i = 0; i < newBlocked.length - 1; i++) {
             newBlocked[i] = account.blocked[i];
         }
@@ -479,21 +491,21 @@ public class Account {
      * @param unblockID the given unblockID
      */
     public static void unblock(String ID, String unblockID) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
                 break;
             }
         }
-        ArrayList<String> blockedList = new ArrayList<>();
+        ArrayList<String> blockedList = new ArrayList<>();  // blocked list
         for (String blockedID : account.blocked) {
             if (!blockedID.equals(unblockID)) {
                 blockedList.add(blockedID);
             }
         }
-        String[] newBlocked = new String[blockedList.size()];
+        String[] newBlocked = new String[blockedList.size()];   // new blocked array
         for (int i = 0; i < newBlocked.length; i++) {
             newBlocked[i] = blockedList.get(i);
         }
@@ -507,15 +519,15 @@ public class Account {
      * @param invisibleID the given invisibleID
      */
     public static void invisible(String ID, String invisibleID) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
                 break;
             }
         }
-        String[] newInvisibleTo = new String[account.invisibleTo.length + 1];
+        String[] newInvisibleTo = new String[account.invisibleTo.length + 1];   // new invisible to array
         for (int i = 0; i < newInvisibleTo.length - 1; i++) {
             newInvisibleTo[i] = account.invisibleTo[i];
         }
@@ -530,21 +542,21 @@ public class Account {
      * @param uninvisibleID the given uninvisibleID
      */
     public static void uninvisible(String ID, String uninvisibleID) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
                 break;
             }
         }
-        ArrayList<String> invisibleToList = new ArrayList<>();
+        ArrayList<String> invisibleToList = new ArrayList<>();  // invisible to list
         for (String invisibleToID : account.invisibleTo) {
             if (!invisibleToID.equals(uninvisibleID)) {
                 invisibleToList.add(invisibleToID);
             }
         }
-        String[] newInvisibleTo = new String[invisibleToList.size()];
+        String[] newInvisibleTo = new String[invisibleToList.size()];   // new invisible to array
         for (int i = 0; i < newInvisibleTo.length; i++) {
             newInvisibleTo[i] = invisibleToList.get(i);
         }
@@ -558,8 +570,8 @@ public class Account {
      * @param messages the given messages list
      */
     public static void setMessages(String ID, Message[] messages) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
@@ -581,8 +593,8 @@ public class Account {
      * @param stores the given messages list
      */
     public static void setStores(String ID, Store[] stores) {
-        Account[] accounts = readAccountsData();
-        Account account = null;
+        Account[] accounts = readAccountsData();    // accounts data
+        Account account = null;     // account looking for
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].ID.equals(ID)) {
                 account = accounts[i];
@@ -602,7 +614,7 @@ public class Account {
         if (Integer.parseInt(ID) % 2 == 0) {
             return ID;
         } else {
-            Account[] accounts = readAccountsData();
+            Account[] accounts = readAccountsData();    // accounts data
             for (Account account : accounts) {
                 for (Store store : account.stores) {
                     if (store.getID().equals(ID)) {
@@ -620,7 +632,7 @@ public class Account {
      * @return the ID of the user
      */
     public static String IDofUsername(String username) {
-        Account[] accounts = readAccountsData();
+        Account[] accounts = readAccountsData();    // accounts data
         for (Account account : accounts) {
             if (account.username.equals(username)) {
                 return account.ID;
@@ -635,7 +647,7 @@ public class Account {
      * @return the ID of the user
      */
     public static String IDofStorename(String storename) {
-        Account[] accounts = readAccountsData();
+        Account[] accounts = readAccountsData();    // accounts data
         for (Account account : accounts) {
             for (Store store : account.stores) {
                 if (store.getName().equals(storename)) {
@@ -685,7 +697,7 @@ public class Account {
      * @return the ID of the user
      */
     public static String IDofEmail(String email) {
-        Account[] accounts = readAccountsData();
+        Account[] accounts = readAccountsData();    // accounts data
         for (Account account : accounts) {
             if (account.email.equals(email)) {
                 return account.ID;
@@ -699,14 +711,14 @@ public class Account {
      * @param ID the ID of the account
      */
     public static void deleteAccount(String ID) {
-        Account[] accounts = readAccountsData();
-        ArrayList<Account> accountsList = new ArrayList<>();
+        Account[] accounts = readAccountsData();    // accounts data
+        ArrayList<Account> accountsList = new ArrayList<>();    // list of accounts
         for (Account account : accounts) {
             if (!account.ID.equals(ID)) {
                 accountsList.add(account);
             }
         }
-        Account[] newAccounts = new Account[accountsList.size()];
+        Account[] newAccounts = new Account[accountsList.size()];   // new array of accounts
         for (int i = 0; i < newAccounts.length; i++) {
             newAccounts[i] = accountsList.get(i);
         }
@@ -720,8 +732,8 @@ public class Account {
      * @return array of usernames
      */
     public static String[] searchUsernames(String ID, String searchString) {
-        Account[] accounts = readAccountsData();
-        ArrayList<String> usernamesList = new ArrayList<>();
+        Account[] accounts = readAccountsData();    // accounts data
+        ArrayList<String> usernamesList = new ArrayList<>();    // list of usernames
         for (Account account : accounts) {
             if (!(account.ID.equals(ID) || Account.userCantSeeUser(ID, account.ID))) {
                 if (account.username.toLowerCase().contains(searchString.toLowerCase()) && !account.role.equals(Account.getRole(ID))) {
@@ -729,7 +741,7 @@ public class Account {
                 }
             }
         }
-        String[] usernames = new String[usernamesList.size()];
+        String[] usernames = new String[usernamesList.size()];  // array of matching result usernames
         for (int i = 0; i < usernames.length; i++) {
             usernames[i] = usernamesList.get(i);
         }
@@ -773,8 +785,8 @@ public class Account {
     }
 
     public static String[] getConversationsWith(String ID) {
-        HashSet<String> IDset = new HashSet<>();
-        Message[] messages = Account.getMessages(ID);
+        HashSet<String> IDset = new HashSet<>();    // set of IDs they have exchanged messages with
+        Message[] messages = Account.getMessages(ID);   // account's messages
         for (Message message : messages) {
             if (ID.equals(message.getSenderID())) {
                 if (!Account.userCantSeeUser(Account.toUserID(ID), Account.toUserID(message.getRecipientID()))) {
@@ -786,7 +798,7 @@ public class Account {
                 }
             }
         }
-        ArrayList<String> deletedIDs = new ArrayList<>();
+        ArrayList<String> deletedIDs = new ArrayList<>();   // IDs of accounts who deleted their accounts
         for (String i : IDset) {
             if (Account.getUsername(i) == null) {
                 deletedIDs.add(i);
@@ -795,7 +807,7 @@ public class Account {
         for (String i : deletedIDs) {
             IDset.remove(i);
         }
-        String[] conversationsWith = new String[IDset.size()];
+        String[] conversationsWith = new String[IDset.size()];  // array of names of conversations
         int index = 0;
         for (String i : IDset) {
             conversationsWith[index] = Account.getUsername(i);
