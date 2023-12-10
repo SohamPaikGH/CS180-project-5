@@ -22,6 +22,7 @@ import java.net.Socket;
  * @version TBD
  */
 class StoreApplication extends JFrame implements ActionListener {
+    String host = "localhost";
     JPasswordField password;
     JTextField username, usernameSetting, emailSetting, passwordSetting;
     JLabel label_password, label_username, title;
@@ -69,7 +70,6 @@ class StoreApplication extends JFrame implements ActionListener {
     String conversationID;
     JButton selectViewButton;
     JFrame mainFrame;
-    String host = "localhost";
 
     public JTable getjTable1() {
         return jTable1;
