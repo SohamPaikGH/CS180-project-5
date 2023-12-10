@@ -308,6 +308,9 @@ public class Account {
      * @return username
      */
     public static String getUsername(String ID) {
+        if (accountWithID(ID) == null && storeWithID(ID) == null) {
+            return null;
+        }
         if (Integer.parseInt(ID) % 2 == 0) {
             return accountWithID(ID).username;
         } else {
@@ -665,6 +668,9 @@ public class Account {
      * @return whether userOne can see userTwo
      */
     public static boolean userCantSeeUser(String userOneID, String userTwoID) {
+        if (getUsername(userTwoID) == null) {
+            return false;
+        }
         for (String ID : getInvisibleTo(userTwoID)) {
             if (ID.equals(Account.toUserID(userOneID))) {
                 return true;
@@ -779,6 +785,15 @@ public class Account {
                     IDset.add(message.getSenderID());
                 }
             }
+        }
+        ArrayList<String> deletedIDs = new ArrayList<>();
+        for (String i : IDset) {
+            if (Account.getUsername(i) == null) {
+                deletedIDs.add(i);
+            }
+        }
+        for (String i : deletedIDs) {
+            IDset.remove(i);
         }
         String[] conversationsWith = new String[IDset.size()];
         int index = 0;

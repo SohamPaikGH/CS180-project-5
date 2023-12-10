@@ -19,6 +19,7 @@ public class Server extends Thread {
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
                 String command = reader.readLine();
+                System.out.println(command);
                 if (command.equals("Close Socket")) {
                     socket.close();
                 } else if (command.equals("Log In")) {
@@ -69,6 +70,9 @@ public class Server extends Thread {
                     } else if (IDofEmail != null && !IDofEmail.equals(ID)) {
                         writer.println("Email Taken");
                     } else {
+                        Account.setUsername(ID, username);
+                        Account.setEmail(ID, email);
+                        Account.setPassword(ID, password);
                         writer.println("Success");
                     }
                     writer.flush();
@@ -292,10 +296,6 @@ public class Server extends Thread {
         Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
         Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
         Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
-        Message.createMessage("0", "2", "Hello!");
-        Message.createMessage("2", "0", "Hi.");
-        Message.createMessage("0", "2", "How are you?");
-        Message.createMessage("2", "0", "I'm good.");
 
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(4242)) {
