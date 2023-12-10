@@ -69,6 +69,7 @@ class StoreApplication extends JFrame implements ActionListener {
     String conversationID;
     JButton selectViewButton;
     JFrame mainFrame;
+    String host = "localhost";
 
     public JTable getjTable1() {
         return jTable1;
@@ -82,7 +83,6 @@ class StoreApplication extends JFrame implements ActionListener {
                 System.exit(0);
             }
         });
-//        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800,600);
         setTitle("Login");
         setLocationRelativeTo(null);
@@ -90,7 +90,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
         // Establish connection
         try {
-            socket = new Socket("localhost", 4242);
+            socket = new Socket(host, 4242);
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
             connectedToServer = true;
@@ -836,7 +836,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
             try {
                 if (!connectedToServer || !socket.isConnected()) {
-                    socket = new Socket("localhost", 4242);
+                    socket = new Socket(host, 4242);
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     writer = new PrintWriter(socket.getOutputStream());
                     connectedToServer = true;
@@ -1065,7 +1065,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
             try {
                 if (!connectedToServer) {
-                    socket = new Socket("localhost", 4242);
+                    socket = new Socket(host, 4242);
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     writer = new PrintWriter(socket.getOutputStream());
                     connectedToServer = true;
