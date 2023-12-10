@@ -589,6 +589,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
+    // Generates data for messages table
     public TableModel getMessagesTable(Object[][] data) {
         String[] columnNames = {"Sender", "Message", "Actions", "Actions"};
 
@@ -601,11 +602,15 @@ class StoreApplication extends JFrame implements ActionListener {
         return tableModel1;
     }
 
+    // Creates Dashboard pane
     protected JComponent createDashboardPane() {
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
+        // Changes Stores Dashboard pane based on user role (e.g. Customer, Seller)
         if (isCustomer) {
             title = new JLabel("All Stores");
         } else {
@@ -617,6 +622,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 0;
         panel.add(title, c);
 
+        // Adds Store dashboard table to tab
         jTable1 = new JTable();
 
         tableModel = getTableModel();
@@ -651,6 +657,7 @@ class StoreApplication extends JFrame implements ActionListener {
         }
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
+        // Adds table to scroll pane, so the table is scrollable
         JScrollPane jScrollPane1 = new JScrollPane();
         jScrollPane1.setViewportView(jTable1);
         jScrollPane1.getViewport().setOpaque(true);
@@ -660,6 +667,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.gridy = 1;
         panel.add(jScrollPane1, c);
 
+        // If the user is a seller, add the button to create stores at the bottom of the tab
         if (!isCustomer) {
             createStoreButton.setPreferredSize(new Dimension(100, 40));
             createStoreButton.addActionListener(StoreApplication.this);
@@ -673,6 +681,7 @@ class StoreApplication extends JFrame implements ActionListener {
         return panel;
     }
 
+    // Generates table model for store dashboard pane
     public TableModel getTableModel() {
         String[] columnNames;
         Object[][] data = null;
@@ -724,6 +733,8 @@ class StoreApplication extends JFrame implements ActionListener {
         };
         return tableModel;
     }
+
+    // Creates the window for searching users to message
     public void createSearchUserWindow() {
         searchUserFrame = new JFrame("Search User");
         searchUserFrame.setSize(new Dimension(300, 200));
@@ -770,6 +781,8 @@ class StoreApplication extends JFrame implements ActionListener {
         searchUserFrame.setVisible(true);
         searchUserFrame.setResizable(true);
     }
+
+    // Creates the window for contacting stores
     public void createStoreContactWindow() {
         storeContactFrame = new JFrame("Contact Store");
         storeContactFrame.setSize(new Dimension(300, 200));
@@ -811,6 +824,7 @@ class StoreApplication extends JFrame implements ActionListener {
         storeContactFrame.setResizable(true);
     }
 
+    // Creates the window for creating stores
     private void initializeStoreCreationWindow() {
         storeCreationWindow = new JFrame("Create Store");
         storeCreationWindow.setSize(new Dimension(300, 200));
@@ -860,14 +874,16 @@ class StoreApplication extends JFrame implements ActionListener {
         storeCreationWindow.setResizable(true);
     }
 
+    // Creates and runs a new StoreApplication object
     public static void main(String[] args) {
         StoreApplication storeApplication = new StoreApplication();
     }
 
+    // Actions for all button action listeners used in the store application
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == signInButton) {
-
+            // When user signs in, connection to server is established
             try {
                 if (!connectedToServer || !socket.isConnected()) {
                     socket = new Socket(host, 4242);
@@ -876,12 +892,15 @@ class StoreApplication extends JFrame implements ActionListener {
                     connectedToServer = true;
                 }
 
+                // Login info sent to server
                 writer.println("Log In");
                 writer.println(username.getText());
                 writer.println(password.getPassword());
                 writer.flush();
 
-
+                // If login info is valid, server sends back confirmation and main app window is initialized
+                // Otherwise, the server tells client the login info is invalid, which causes an error message to pop up
+                // An error message will also pop up if the server is not up
                 String line = reader.readLine();
                 if (line.equals("Success")) {
                     ID = reader.readLine();
@@ -912,6 +931,9 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == saveButton) {
+            // Saves any changes made to account data
+
+            // Sends all user info for email, username, and password to server
             writer.println("Save Account Data");
             writer.println(ID);
             writer.println(usernameSetting.getText());
@@ -924,6 +946,11 @@ class StoreApplication extends JFrame implements ActionListener {
             } catch (IOException ee) {
                 ee.printStackTrace();
             }
+
+            // If all changes are successfully saved, server sends confirmation and client creates pop up to show
+            // user it worked
+            // Otherwise, based on what the server sends back, the client creates pop up that shows what the user did
+            // wrong
             if (line.equals("Success")) {
                 JOptionPane.showMessageDialog(null, "Saved.",
                         "Account Data", JOptionPane.INFORMATION_MESSAGE);
@@ -940,20 +967,24 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == clearButton) {
+            // Clears all fields in Account Settings
             usernameSetting.setText("");
             emailSetting.setText("");
             passwordSetting.setText("");
         }
 
         if (e.getSource() == contactStoreButton) {
+            // Opens store contact window
             EventQueue.invokeLater(this::createStoreContactWindow);
         }
 
         if (e.getSource() == searchUserButton) {
+            // Opens search user window
             EventQueue.invokeLater(this::createSearchUserWindow );
         }
 
         if (e.getSource() == sendMessageButton) {
+            // Sends message to user
             if (role.equals("Seller") && !ID.equals(conversationID)) {
                 writer.println("Send Message As Store");
             } else {
