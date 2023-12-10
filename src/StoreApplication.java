@@ -4,9 +4,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,13 +68,21 @@ class StoreApplication extends JFrame implements ActionListener {
     JComboBox sellerViewSelect;
     String conversationID;
     JButton selectViewButton;
+    JFrame mainFrame;
 
     public JTable getjTable1() {
         return jTable1;
     }
 
     public StoreApplication() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                writer.write("Close Socket");
+                writer.flush();
+                System.exit(0);
+            }
+        });
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800,600);
         setTitle("Login");
         setLocationRelativeTo(null);
@@ -89,7 +95,7 @@ class StoreApplication extends JFrame implements ActionListener {
             writer = new PrintWriter(socket.getOutputStream());
             connectedToServer = true;
         } catch (IOException e) {
-            System.out.println("Connection not found!");
+            e.printStackTrace();
         }
 
         // Start login page
@@ -177,13 +183,12 @@ class StoreApplication extends JFrame implements ActionListener {
     }
 
     protected void initializeApp() {
-        JFrame frame = new JFrame("Store Application");
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        mainFrame = new JFrame("Store Application");
+        mainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setSize(size);
+        mainFrame.setSize(size);
 
-        try
-        {
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
@@ -202,9 +207,9 @@ class StoreApplication extends JFrame implements ActionListener {
         tabbedPane.addTab("Account", null, panel3);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        frame.getContentPane().add(tabbedPane);
-        frame.setVisible(true);
-        frame.setResizable(true);
+        mainFrame.getContentPane().add(tabbedPane);
+        mainFrame.setVisible(true);
+        mainFrame.setResizable(true);
 
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
@@ -297,10 +302,6 @@ class StoreApplication extends JFrame implements ActionListener {
                         accountUsername = reader.readLine();
                         accountEmail = reader.readLine();
                         accountPassword = reader.readLine();
-
-                        System.out.println(accountUsername);
-                        System.out.println(accountEmail);
-                        System.out.println(accountPassword);
 
                         usernameSetting.setText(accountUsername);
                         emailSetting.setText(accountEmail);
@@ -665,7 +666,6 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.flush();
             try {
                 int storeCount = Integer.parseInt(reader.readLine());
-                System.out.println(storeCount);
                 data = new Object[storeCount][];
                 for (int i = 0; i < storeCount; i++) {
                     data[i] = new Object[4];
@@ -1103,8 +1103,11 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println("Delete Account");
             writer.println(ID);
             writer.flush();
-            JOptionPane.showMessageDialog(null, "Account Deleted!", "Account Settings",
+            JOptionPane.showMessageDialog(null, "Account Deleted! Program will close.", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.dispose();
+            writer.write("Close Socket");
+            System.exit(0);
         }
 
         if (e.getSource() == createStoreButton) {
@@ -1180,7 +1183,6 @@ class StoreApplication extends JFrame implements ActionListener {
             searchUserResults.removeAllItems();
             try {
                 int resultCount = Integer.parseInt(reader.readLine());
-                System.out.println(resultCount);
                 if (resultCount != 0) {
                     for (int i = 0; i < resultCount; i++) {
                         searchUserResults.addItem(reader.readLine());
@@ -1309,7 +1311,7 @@ class StoreApplication extends JFrame implements ActionListener {
             } catch (IOException ee) {
                 ee.printStackTrace();
             }
-///
+
             writer.println("Get Conversations");
             writer.println(conversationID);
             writer.flush();
@@ -1323,7 +1325,7 @@ class StoreApplication extends JFrame implements ActionListener {
             } catch (IOException ee) {
                 ee.printStackTrace();
             }
-///
+
             String recipientName = String.valueOf(recipientSelection.getSelectedItem());
             if (!recipientName.isEmpty()) {
                 writer.println("Conversation");

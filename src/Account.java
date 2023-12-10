@@ -704,7 +704,7 @@ public class Account {
         for (int i = 0; i < newAccounts.length; i++) {
             newAccounts[i] = accountsList.get(i);
         }
-        writeAccountsData(accounts);
+        writeAccountsData(newAccounts);
     }
 
     /**
