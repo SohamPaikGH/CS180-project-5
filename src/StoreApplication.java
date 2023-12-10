@@ -24,6 +24,8 @@ import java.net.Socket;
 class StoreApplication extends JFrame implements ActionListener {
     String host = "localhost"; // IP Address of Host
     JPasswordField password; // Password field used in the initial Sign In and Sign Up Pages
+    JTextField usernameSignUpPage;
+    JPasswordField passwordSignUpPage;
     JTextField username, usernameSetting, emailSetting, passwordSetting; // Text fields that take input for username
     // and email in the sign up page and Account Settings tab of the main application window
     JLabel label_password, label_username, title; // Labels for text fields that take input for username and email
@@ -160,11 +162,11 @@ class StoreApplication extends JFrame implements ActionListener {
         JLabel label_role = new JLabel("Role");
         label_role.setBounds(200, 350, 100, 40);
 
-        username = new JTextField();
-        username.setBounds(300, 200, 300, 40);
+        usernameSignUpPage = new JTextField();
+        usernameSignUpPage.setBounds(300, 200, 300, 40);
 
-        password = new JPasswordField(50);
-        password.setBounds(300, 250, 300, 40);
+        passwordSignUpPage = new JPasswordField(50);
+        passwordSignUpPage.setBounds(300, 250, 300, 40);
 
         emailSetting = new JTextField();
         emailSetting.setBounds(300, 300, 300, 40);
@@ -178,9 +180,9 @@ class StoreApplication extends JFrame implements ActionListener {
         registerButton.addActionListener(StoreApplication.this);
 
         signUpFrame.add(label_username);
-        signUpFrame.add(username);
+        signUpFrame.add(usernameSignUpPage);
         signUpFrame.add(label_password);
-        signUpFrame.add(password);
+        signUpFrame.add(passwordSignUpPage);
         signUpFrame.add(label_email);
         signUpFrame.add(emailSetting);
         signUpFrame.add(label_role);
@@ -902,6 +904,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 // Otherwise, the server tells client the login info is invalid, which causes an error message to pop up
                 // An error message will also pop up if the server is not up
                 String line = reader.readLine();
+                System.out.println(line);
                 if (line.equals("Success")) {
                     ID = reader.readLine();
                     conversationID = ID;
@@ -1137,9 +1140,9 @@ class StoreApplication extends JFrame implements ActionListener {
                 }
 
                 writer.println("Sign up");
-                writer.println(username.getText());
+                writer.println(usernameSignUpPage.getText());
                 writer.println(emailSetting.getText());
-                writer.println(password.getPassword());
+                writer.println(passwordSignUpPage.getPassword());
                 writer.println(String.valueOf(roleSetting.getSelectedItem()));
                 writer.flush();
 
