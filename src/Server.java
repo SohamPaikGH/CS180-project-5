@@ -19,8 +19,9 @@ public class Server extends Thread {
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
                 String command = reader.readLine();
-                System.out.println(command);
-                if (command.equals("Log In")) {
+                if (command.equals("Close Socket")) {
+                    socket.close();
+                } else if (command.equals("Log In")) {
                     String username = reader.readLine();
                     String password = reader.readLine();
                     String ID = Account.IDofUsername(username);
@@ -179,7 +180,6 @@ public class Server extends Thread {
                     String ID = reader.readLine();
                     String[] usernames = Account.searchUsernames(ID, "");
                     writer.println(usernames.length);
-                    System.out.println("Number of usernames: " + usernames.length);
                     for (String username : usernames) {
                         writer.println(username);
                     }
@@ -300,9 +300,7 @@ public class Server extends Thread {
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(4242)) {
                 while (true) {
-                    System.out.println("Waiting for the client to connect...");
                     Socket socket = serverSocket.accept();
-                    System.out.println("Client connected!");
                     new Server(socket);
                 }
             } catch (IOException e) {
