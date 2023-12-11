@@ -9,9 +9,9 @@ import org.json.simple.parser.*;
  * Class to deal with account data, such as editing and accessing
  * I used Tutorialspoint to learn how to use json files in java
  *
- * @author Sean Kim, Soham Paik, Yash Patel, lab sec l17
+ * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
  *
- * @version December 10, 2023
+ * @version December 11, 2023
  */
 public class Account {
     private String username;        // username
