@@ -14,11 +14,12 @@ import java.net.Socket;
 
 /**
  * Store Application
- * <p>
+ *
  * This file initializes the store application client and the GUI. All calls to the
  * server from the client are made by the StoreApplication object.
  *
- * @author Soham Paik, CS 180 Black
+ * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
+ *
  * @version December 11, 2023
  */
 class StoreApplication extends JFrame implements ActionListener {

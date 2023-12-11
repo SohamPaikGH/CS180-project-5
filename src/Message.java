@@ -6,9 +6,9 @@ import java.util.ArrayList;
  * This class deals with managing the data regarding messages. It has methods to
  * create, edit, and delete messages, as well as access information regarding them.
  *
- * @author Sean Kim, Soham Paik, Yash Patel, lab sec l17
+ * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
  *
- * @version December 10, 2023
+ * @version December 11, 2023
  */
 public class Message {
     private String senderID;        // ID of the sender of the message
