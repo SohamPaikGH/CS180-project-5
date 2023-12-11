@@ -4,19 +4,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-
 /**
  * Button Editor
  * <p>
  *     This class defines the custom ButtonEditor used in the StoreApplication class.
- *     It is used to add buttons to a column of cells in a JTable in Java Swing. This class
- *     is an extension of the DefaultCellEditor class in Java Swing.
+ *     It is used to add buttons and their functionalities to a column of cells in a JTable in Java Swing.
+ *     This class is an extension of the DefaultCellEditor class in Java Swing. This adds functionality to a
+ *     button added to a JTable by the ButtonRenderer class.
  *
  * @author Soham Paik, CS 180 Black
  * @version December 11, 2023
  * </p>
  */
-
 class ButtonEditor extends DefaultCellEditor {
     protected JButton btn; // Button to add to cell
     private String lbl; // Label of button

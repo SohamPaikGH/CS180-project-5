@@ -10,9 +10,9 @@ on which the server is running. Afterward, run `StoreApplication.java` to get st
 the application.
 
 ## Submissions
-___ submitted the report and video on Brightspace.
+Sean Kim submitted the report and video on Brightspace.
 
-___ submitted the Vocareum workspace.
+Soham Paik submitted the Vocareum workspace.
 
 ## Classes
 
@@ -33,10 +33,17 @@ other helper methods are used in the Message and Store classes so that these cla
 and stores associated with the accounts.
 
 ### ButtonEditor
+This class deals with adding a JButton to a JTable in Java Swing GUI used in the StoreApplication class. It extends the 
+JButton class and implements the TableCellRenderer interface. The class alone simply changes the background and 
+foreground colors of the table cell, so that it looks more like a button. It also adds a JButton to a table cell. 
+However, the functionality executed by clicking the JButton is handled in the ButtonRenderer class.
 
-
-### Button Renderer
-
+### ButtonRenderer
+This class adds functionality to a JButton added to a JTable column or cell by the ButtonEditor class. It extends 
+the DefaultCellEditor class and contains a constructor that takes the arguments `checkBox`, `storeApplication`, and 
+`action`. Each ButtonRenderer object takes the storeApplication object running the main application GUI and the name 
+of the action the JButton carries out. Based on the name of the action, the JButton opens a new window, sends 
+account and store data to the server, or updates the table in the Stores dashboard of the application GUI.
 
 ### Message
 This class deals with managing the Messages associated with accounts. It uses the helper methods from the 
@@ -73,8 +80,8 @@ by the `Server.java` class and leaves all the processing of data to the server. 
 in order to display information to and take inputs from the user. Each time this a client needs to make a 
 request to the server to carry out a certain task, the first line it writes indicates 
 what the server should do and what inputs it should expect, and then the following lines in provide the 
-necessary arguments. In the GUI, the main part of the application is displayed in a single JFrame with several 
-tabbed panes, including the Stores tab, the Conversations tab, and the Account tab. Each tab has its own set 
+necessary arguments. In the GUI, the main part of the application is displayed in a single JFrame with a tabbed pane 
+that includes the Stores tab, the Conversations tab, and the Account tab. Each tab has its own set 
 of panels that contain the necessary GUI elements such as buttons and text boxes. In addition, each time the 
 user switches tabs, it refreshes the elements in the tab with updates information from the server. For some purposes, 
 the program creates new smaller JFrames with a more specific task. For example, there is a separate window for 

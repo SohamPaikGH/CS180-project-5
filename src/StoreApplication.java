@@ -18,7 +18,7 @@ import java.net.Socket;
  * This file initializes the store application client and the GUI. All calls to the
  * server from the client are made by the StoreApplication object.
  *
- * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
+ * @author Soham Paik, Sean Kim, Yash Patel, CS 18000 Black, lab sec l17
  *
  * @version December 11, 2023
  */
