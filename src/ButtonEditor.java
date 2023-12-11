@@ -6,15 +6,15 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 /**
  * Button Editor
- * <p>
- *     This class defines the custom ButtonEditor used in the StoreApplication class.
- *     It is used to add buttons and their functionalities to a column of cells in a JTable in Java Swing.
- *     This class is an extension of the DefaultCellEditor class in Java Swing. This adds functionality to a
- *     button added to a JTable by the ButtonRenderer class.
  *
- * @author Soham Paik, CS 180 Black
+ * This class defines the custom ButtonEditor used in the StoreApplication class.
+ * It is used to add buttons and their functionalities to a column of cells in a JTable in Java Swing.
+ * This class is an extension of the DefaultCellEditor class in Java Swing. This adds functionality to a
+ * button added to a JTable by the ButtonRenderer class.
+ *
+ * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
+ *
  * @version December 11, 2023
- * </p>
  */
 class ButtonEditor extends DefaultCellEditor {
     protected JButton btn; // Button to add to cell
@@ -69,14 +69,16 @@ class ButtonEditor extends DefaultCellEditor {
         if (clicked) {
             // If the button is clicked and its action is to edit/delete messages
             if (action.equals("Edit Message") || action.equals("Delete Message")) {
-                if (!storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(), 0).equals(storeApplication.recipientSelection.getSelectedItem())) {
+                if (!storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(),
+                        0).equals(storeApplication.recipientSelection.getSelectedItem())) {
                     if (action.equals("Edit Message")) {
                         // Send conversation ID, recipient name, message number, and message value to the server
                         storeApplication.writer.println("Edit Message");
                         storeApplication.writer.println(storeApplication.conversationID);
                         storeApplication.writer.println(storeApplication.recipientName);
                         storeApplication.writer.println(storeApplication.msgTable.getSelectedRow());
-                        storeApplication.writer.println(storeApplication.msgTable.getValueAt(storeApplication.msgTable.getSelectedRow(), 1));
+                        storeApplication.writer.println(storeApplication.msgTable.getValueAt(
+                                storeApplication.msgTable.getSelectedRow(), 1));
                         storeApplication.writer.flush();
                     } else {
                         // Send conversation ID, recipient name, and message value to the server
@@ -125,13 +127,17 @@ class ButtonEditor extends DefaultCellEditor {
                     storeApplication.msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
                     // Add buttons recursively by calling "this" object to the JTable
-                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellRenderer(
+                            new ButtonRenderer());
+                    storeApplication.msgTable.getColumnModel().getColumn(2).setCellEditor(
+                            new ButtonEditor(new JCheckBox(),
                             storeApplication,
                             "Edit Message"));
 
-                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellRenderer(
+                            new ButtonRenderer());
+                    storeApplication.msgTable.getColumnModel().getColumn(3).setCellEditor(
+                            new ButtonEditor(new JCheckBox(),
                             storeApplication,
                             "Delete Message"));
 
@@ -172,12 +178,14 @@ class ButtonEditor extends DefaultCellEditor {
                                     JOptionPane.INFORMATION_MESSAGE);
                         } else if (line.equals("Name Exists")) {
                             // If the store name already exists, throw an error
-                            JOptionPane.showMessageDialog(null, "Name already exists. Please try again!", "Error",
+                            JOptionPane.showMessageDialog(null,
+                                    "Name already exists. Please try again!", "Error",
                                     JOptionPane.ERROR_MESSAGE);
 
                         } else if (line.equals("Name Blank")) {
                             // If the store name is blank, throw an error
-                            JOptionPane.showMessageDialog(null, "Name is blank. Please try again!", "Error",
+                            JOptionPane.showMessageDialog(null,
+                                    "Name is blank. Please try again!", "Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
 
@@ -214,13 +222,17 @@ class ButtonEditor extends DefaultCellEditor {
                         storeApplication.jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
                         // Add "Save Store Data" and "Delete Store" buttons to the table using "this" object
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellRenderer(
+                                new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(2).setCellEditor(
+                                new ButtonEditor(new JCheckBox(),
                                 storeApplication,
                                 "Save Store Data"));
 
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(
+                                new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(
+                                new ButtonEditor(new JCheckBox(),
                                 storeApplication,
                                 "Delete Store"));
 
@@ -233,8 +245,10 @@ class ButtonEditor extends DefaultCellEditor {
                         storeApplication.jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
                         // Add "Save Store Data" and "Delete Store" buttons to the table using "this" object
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellRenderer(
+                                new ButtonRenderer());
+                        storeApplication.jTable1.getColumnModel().getColumn(3).setCellEditor(
+                                new ButtonEditor(new JCheckBox(),
                                 storeApplication,
                                 "Contact Store"));
                     }
