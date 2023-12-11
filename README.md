@@ -7,7 +7,9 @@ the project in the editor of your choice and compile and run `Server.java`. Then
 repository on each device that the program will be run from. Open the project in an editor and 
 go to line 25 of `StoreApplication.java`. Change `"localhost"` to the IP address of the device 
 on which the server is running. Afterward, run `StoreApplication.java` to get started with using 
-the application.
+the application. In order to run the code, you will need to download the json-simple library and
+add it to this project in your IDE of choice. Follow this link to download the JAR file for the 
+json-simple library: https://code.google.com/archive/p/json-simple/downloads
 
 ## Submissions
 Sean Kim submitted the report and video on Brightspace.
