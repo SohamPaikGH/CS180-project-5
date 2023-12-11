@@ -687,11 +687,14 @@ class StoreApplication extends JFrame implements ActionListener {
     public TableModel getTableModel() {
         String[] columnNames;
         Object[][] data = null;
+        // Changes the number and titles of columns if the user is seller v. customer
         if (role.equals("Customer")) {
+            // Create column names and fetch store data from server
             columnNames = new String[] {"Stores", "Descriptions", "Owner", "Actions"};
             writer.println("Customer Dashboard");
             writer.flush();
             try {
+                // Save all store data to the variable "data"
                 int storeCount = Integer.parseInt(reader.readLine());
                 data = new Object[storeCount][];
                 for (int i = 0; i < storeCount; i++) {
@@ -705,11 +708,13 @@ class StoreApplication extends JFrame implements ActionListener {
                 e.printStackTrace();
             }
         } else {
+            // Create column names and fetch personal store data from server
             columnNames = new String[] {"Stores", "Descriptions", "Actions", "Actions"};
             writer.println("Seller Dashboard");
             writer.println(ID);
             writer.flush();
             try {
+                // Save all store data to the variable "data"
                 int storeCount = Integer.parseInt(reader.readLine());
                 data = new Object[storeCount][];
                 for (int i = 0; i < storeCount; i++) {
@@ -724,6 +729,7 @@ class StoreApplication extends JFrame implements ActionListener {
             }
         }
 
+        // Make column 3 editable for customers, so that the button for contacting stores can be clicked
         TableModel tableModel = new DefaultTableModel(data, columnNames) {
             public boolean isCellEditable(int row, int column) {
                 if (role.equals("Customer")) {
@@ -738,6 +744,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
     // Creates the window for searching users to message
     public void createSearchUserWindow() {
+        // Create frame to represent the window and set its properties
         searchUserFrame = new JFrame("Search User");
         searchUserFrame.setSize(new Dimension(300, 200));
 
@@ -747,19 +754,24 @@ class StoreApplication extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(true);
 
         GridBagConstraints c = new GridBagConstraints();
 
+        // Initialize the userSearchField
         userSearchField = new JTextField();
 
+        // Adds the user search textfield to the window
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(userSearchField, c);
 
+        // Adds the user search button to the window
         searchButton = new JButton("Search Username");
         searchButton.addActionListener(StoreApplication.this);
         c.gridx = 0;
@@ -767,18 +779,21 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(searchButton, c);
 
+        // Adds the dropdown menu that will display the results to the window
         searchUserResults = new JComboBox();
         c.gridx = 0;
         c.gridy = 4;
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(searchUserResults, c);
 
+        // Adds the button to add a search result to the recipient list to the window
         addRecipientButton.addActionListener(StoreApplication.this);
         c.gridx = 0;
         c.gridy = 5;
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(addRecipientButton, c);
 
+        // Adds all components of panel to window
         searchUserFrame.getContentPane().add(BorderLayout.CENTER, panel);
         searchUserFrame.setVisible(true);
         searchUserFrame.setResizable(true);
@@ -786,6 +801,7 @@ class StoreApplication extends JFrame implements ActionListener {
 
     // Creates the window for contacting stores
     public void createStoreContactWindow() {
+        // Create frame to represent the window and set its properties
         storeContactFrame = new JFrame("Contact Store");
         storeContactFrame.setSize(new Dimension(300, 200));
 
@@ -795,12 +811,15 @@ class StoreApplication extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(true);
 
         GridBagConstraints c = new GridBagConstraints();
 
+        // Adds all necessary labels, text fields, and buttons to the window
         JLabel label1 = new JLabel("Message");
         c.gridx = 0;
         c.gridy = 2;
@@ -821,6 +840,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(storeSendMessageButton, c);
 
+        // Adds all components of panel to window
         storeContactFrame.getContentPane().add(BorderLayout.CENTER, panel);
         storeContactFrame.setVisible(true);
         storeContactFrame.setResizable(true);
@@ -828,15 +848,19 @@ class StoreApplication extends JFrame implements ActionListener {
 
     // Creates the window for creating stores
     private void initializeStoreCreationWindow() {
+        // Create frame to represent the window and set its properties
         storeCreationWindow = new JFrame("Create Store");
         storeCreationWindow.setSize(new Dimension(300, 200));
 
+        // Creates panel to contain all components of this tab
+        // GridBagLayout is default layout of the panel because it is easier to use
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(true);
 
         GridBagConstraints c = new GridBagConstraints();
 
+        // Adds all required labels, text fields, and buttons to the panel
         JLabel label1 = new JLabel("Store Name");
         c.gridx = 0;
         c.gridy = 0;
@@ -871,6 +895,7 @@ class StoreApplication extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.add(confirmStoreCreateButton, c);
 
+        // Adds all components of panel to window
         storeCreationWindow.getContentPane().add(BorderLayout.CENTER, panel);
         storeCreationWindow.setVisible(true);
         storeCreationWindow.setResizable(true);
@@ -989,21 +1014,28 @@ class StoreApplication extends JFrame implements ActionListener {
         if (e.getSource() == sendMessageButton) {
             // Sends message to user
             if (role.equals("Seller") && !ID.equals(conversationID)) {
+                // Server is told that user wants to send message as store
                 writer.println("Send Message As Store");
             } else {
+                // Server is told that user wants to directly message
                 writer.println("Send Message");
             }
+            // Sends the conversation ID, recipient name, and message to the server
             writer.println(conversationID);
             writer.println(String.valueOf(recipientSelection.getSelectedItem()));
             writer.println(messageField.getText());
             writer.flush();
 
             try {
+                // Gets response from server
                 String response = reader.readLine();
 
                 if ( response.equals("Success") ) {
+                    // The message was sent
 
                     if (!recipientName.isEmpty()) {
+                        // If the recipient still exists and hasn't deleted their account,
+                        // Send the conversation ID to the server
                         writer.println("Conversation");
                         writer.println(conversationID);
                         writer.println(recipientName);
@@ -1012,19 +1044,24 @@ class StoreApplication extends JFrame implements ActionListener {
                         String messageCountLine = reader.readLine();
                         int messageCount = Integer.parseInt(messageCountLine);
 
+                        // Read all message data sent by the server
                         Object[][] messageData = new Object[messageCount][4];
                         for (int i = 0; i < messageCount; i++) {
+                            // Add each message to the data for messages that will be added to Conversations table
                             messageData[i][0] = reader.readLine();
                             messageData[i][1] = reader.readLine();
+                            // Leave the last two columns for the Edit and Delete buttons
                             if (!messageData[i][0].equals(recipientName)) {
                                 messageData[i][2] = "Edit";
                                 messageData[i][3] = "Delete";
                             }
                         }
 
+                        // Add the data to the messages data table
                         TableModel messagesDataTable = getMessagesTable(messageData);
                         msgTable.setModel(messagesDataTable);
 
+                        // Set up the formatting and size of the message table in Conversations
                         msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                         msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
                         msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -1044,9 +1081,11 @@ class StoreApplication extends JFrame implements ActionListener {
                     }
 
                 } else if ( response.equals("Blocked") ) {
+                    // The message is blocked
                     JOptionPane.showMessageDialog(null, "Blocked!", "Conversations",
                             JOptionPane.ERROR_MESSAGE);
                 } else {
+                    // The recipient deleted their account
                     JOptionPane.showMessageDialog(null, "This recipient has deleted their account!", "Error",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -1057,8 +1096,10 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == storeSendMessageButton) {
+            // Get name of store user wants to contact
             String storeName = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
 
+            // Tell server the message, ID, and name of the store user wants to contact
             writer.println("Send Message");
             writer.println(ID);
             writer.println(storeName);
@@ -1066,15 +1107,19 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.flush();
 
             try {
+                // Read data from server
                 String line = reader.readLine();
 
                 if (line.equals("Success")) {
+                    // The message has been sent, so tell the user it successfully reached the recipient
                     JOptionPane.showMessageDialog(null, "Message Sent!", "Conversations",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else if (line.equals("Blocked")) {
+                    // The recipient blocked the user
                     JOptionPane.showMessageDialog(null, "Blocked!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 } else {
+                    // The store no longer exists
                     JOptionPane.showMessageDialog(null, "This store has been deleted!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -1085,17 +1130,22 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == blockRecipientButton) {
+            // Toggle blocking
+            // Send ID and name of recipient to block to the server
             writer.println("Toggle Block");
             writer.println(ID);
             writer.println(recipientSelection.getSelectedItem());
             writer.flush();
 
             try {
+                // Read server data
                 String response = reader.readLine();
                 if (response.equals("Blocked")) {
+                    // The recipient was not blocked before but just got blocked by this button
                     JOptionPane.showMessageDialog(null, "User blocked!", "Conversations",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else if (response.equals("Unblocked")) {
+                    // The recipient was blocked before but got unblocked by this button
                     JOptionPane.showMessageDialog(null, "User unblocked!", "Conversations",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -1105,6 +1155,8 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == appearInvisibleToRecipientButton) {
+            // Toggle invisibility
+            // Send ID and recipient name to the server
             writer.println("Toggle Invisible");
             writer.println(ID);
             writer.println(recipientSelection.getSelectedItem());
@@ -1113,9 +1165,11 @@ class StoreApplication extends JFrame implements ActionListener {
             try {
                 String response = reader.readLine();
                 if (response.equals("Invisible")) {
+                    // The user is now invisible to the recipient
                     JOptionPane.showMessageDialog(null, "You are now invisible to this user!", "Conversations",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else if (response.equals("Visible")) {
+                    // The user is now visible to the recipient
                     JOptionPane.showMessageDialog(null, "You are now visible to this user!", "Conversations",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -1125,13 +1179,15 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == signUpButton) {
+            // Close the log in window and open the sign up page
             setVisible(false);
             EventQueue.invokeLater(this::initializeSignUpPage);
         }
 
         if (e.getSource() == registerButton) {
-
+            // Register a new account with the server
             try {
+                // Connect to the server if there is no connection already
                 if (!connectedToServer) {
                     socket = new Socket(host, 4242);
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -1139,6 +1195,7 @@ class StoreApplication extends JFrame implements ActionListener {
                     connectedToServer = true;
                 }
 
+                // Send new username, email, and password to server
                 writer.println("Sign up");
                 writer.println(usernameSignUpPage.getText());
                 writer.println(emailSetting.getText());
@@ -1148,17 +1205,21 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 String line = reader.readLine();
                 if (line.equals("Success")) {
+                    // If the account was created, bring back the login page
                     JOptionPane.showMessageDialog(null, "Account created.",
                             "Sign Up", JOptionPane.INFORMATION_MESSAGE);
                     signUpFrame.setVisible(false);
                     setVisible(true);
                 } else if (line.equals("Blank")) {
+                    // Print an error if one of the fields was blank
                     JOptionPane.showMessageDialog(null, "At least one of your fields is blank. Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Username Taken")) {
+                    // If the username entered already exists in the system, print an error
                     JOptionPane.showMessageDialog(null, "That username is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Email Taken")) {
+                    // If the email entered already exists in the system, print an error
                     JOptionPane.showMessageDialog(null, "That email is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1168,44 +1229,54 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == deleteAccountButton) {
+            // Delete the account by sending the ID
             writer.println("Delete Account");
             writer.println(ID);
             writer.flush();
+            // Tell the user their account was deleted and close the window
             JOptionPane.showMessageDialog(null, "Account Deleted! Program will close.", "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
             mainFrame.dispose();
+            // Also close the connection
             writer.write("Close Socket");
             System.exit(0);
         }
 
         if (e.getSource() == createStoreButton) {
+            // Initialize the store creation window
             EventQueue.invokeLater(this::initializeStoreCreationWindow);
         }
 
         if (e.getSource() == confirmStoreCreateButton) {
+            // Send the server the User ID, the store name, and the store description
             writer.println("Create Store");
             writer.println(ID);
             writer.println(storeName.getText());
             writer.println(storeDesc.getText());
             writer.flush();
 
+            // Get data from server
             try {
                 String line = reader.readLine();
 
                 if (line.equals("Success")) {
+                    // If the store was successfully created, tell the user the store was added
                     JOptionPane.showMessageDialog(null, "Store created!",
                             "Success!", JOptionPane.INFORMATION_MESSAGE);
                     storeCreationWindow.setVisible(false);
 
+                    // Update the Stores dashboard table with the new store
                     TableModel tableModel1 = getTableModel();
                     jTable1.setModel(tableModel1);
 
                     if (!isCustomer) {
+                        // Adjust the size of the columns
                         jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
                         jTable1.getColumnModel().getColumn(1).setPreferredWidth(550);
                         jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
                         jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+                        // Add the "Save Store Data" and "Delete Store" buttons
                         jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -1217,11 +1288,13 @@ class StoreApplication extends JFrame implements ActionListener {
                                 "Delete Store"));
 
                     } else {
+                        // Adjust the size of the columns
                         jTable1.getColumnModel().getColumn(0).setPreferredWidth(250);
                         jTable1.getColumnModel().getColumn(1).setPreferredWidth(450);
                         jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
                         jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+                        // Add the "Save Store Data" and "Delete Store" buttons
                         jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
                         jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
@@ -1230,9 +1303,11 @@ class StoreApplication extends JFrame implements ActionListener {
                     jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
                 } else if (line.equals("Name Blank")) {
+                    // Tell the user they left the name blank and give them an error
                     JOptionPane.showMessageDialog(null, "The store name is blank. Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Name Exists")) {
+                    // Tell the user the name already exists and give them an error
                     JOptionPane.showMessageDialog(null, "That store name is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1243,13 +1318,17 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == searchButton) {
+            // Send the server the user ID and the search term
             String searchText = userSearchField.getText();
             writer.println("Search Users");
             writer.println(ID);
             writer.println(searchText);
             writer.flush();
+
+            // Clear previous search results
             searchUserResults.removeAllItems();
             try {
+                // Add all search results received from server to the search user results drop down menu
                 int resultCount = Integer.parseInt(reader.readLine());
                 if (resultCount != 0) {
                     for (int i = 0; i < resultCount; i++) {
@@ -1261,30 +1340,38 @@ class StoreApplication extends JFrame implements ActionListener {
             }
         }
         if ( e.getSource() == selectRecipientButton ) {
+            // Select the recipient based on the value of the drop down menu
             recipientName = String.valueOf(recipientSelection.getSelectedItem());
             if (!recipientName.isEmpty()) {
+                // Send the server the conversation ID and the name of the recipient
                 writer.println("Conversation");
                 writer.println(conversationID);
                 writer.println(recipientName);
                 writer.flush();
 
                 try {
+                    // Read data from the server
                     String messageCountLine = reader.readLine();
                     int messageCount = Integer.parseInt(messageCountLine);
 
+                    // Add the message data to the messages table
                     Object[][] messageData = new Object[messageCount][4];
                     for (int i = 0; i < messageCount; i++) {
                         messageData[i][0] = reader.readLine();
                         messageData[i][1] = reader.readLine();
+
+                        // Leave the last two columns blank and add the "Edit" and "Delete" buttons
                         if (!messageData[i][0].equals(recipientName)) {
                             messageData[i][2] = "Edit";
                             messageData[i][3] = "Delete";
                         }
                     }
 
+                    // Add the data to the messages data table
                     TableModel messagesDataTable = getMessagesTable(messageData);
                     msgTable.setModel(messagesDataTable);
 
+                    // Format the messages table, so it looks nice
                     msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                     msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
                     msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -1292,6 +1379,8 @@ class StoreApplication extends JFrame implements ActionListener {
                     msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
                     msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+                    // Leave the last two columns blank, so that the "Edit Message" and "Delete Message" buttons are
+                    // blank
                     msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                     msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                             StoreApplication.this,
@@ -1309,41 +1398,51 @@ class StoreApplication extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == addRecipientButton) {
+            // The recipient is added to the recipient drop down menu
             recipientName = (String) searchUserResults.getSelectedItem();
             boolean itemExists = false;
+            // If the recipient name exists in the drop down menu, don't add it again
             for (int i = 0; i < recipientSelection.getItemCount(); i++) {
                 if (recipientSelection.getItemAt(i).equals(recipientName)) {
                     itemExists = true;
                 }
             }
+            // Otherwise, add it again
             if (!itemExists) {
                 recipientSelection.addItem(recipientName);
             }
 
+            // Get recipient selection name
             recipientSelection.setSelectedItem(recipientName);
 
+            // Send the server the conversation ID and recipient name
             writer.println("Conversation");
             writer.println(conversationID);
             writer.println(recipientName);
             writer.flush();
 
             try {
+                // Read data from server
                 String messageCountLine = reader.readLine();
                 int messageCount = Integer.parseInt(messageCountLine);
 
+                // Add messages data from server to the messageData variable
                 Object[][] messageData = new Object[messageCount][4];
                 for (int i = 0; i < messageCount; i++) {
                     messageData[i][0] = reader.readLine();
                     messageData[i][1] = reader.readLine();
+                    // Leave the last two columns blank for the "Edit" and "Delete" buttons
                     if (!messageData[i][0].equals(recipientName)) {
                         messageData[i][2] = "Edit";
                         messageData[i][3] = "Delete";
                     }
                 }
 
+                // Add data to the messages table
                 TableModel messagesDataTable = getMessagesTable(messageData);
                 msgTable.setModel(messagesDataTable);
 
+                // Format the messages table, so it looks organized
                 msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                 msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
                 msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -1351,6 +1450,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
                 msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+                // Leave the last two columns blank and add the "Edit Message" and "Delete Message" buttons
                 msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                 msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                         StoreApplication.this,
@@ -1370,6 +1470,7 @@ class StoreApplication extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == selectViewButton) {
+            // Change seller view to selected store
             String choice = sellerViewSelect.getSelectedItem().toString();
             writer.println("Get ID");
             writer.println(choice);
@@ -1380,12 +1481,15 @@ class StoreApplication extends JFrame implements ActionListener {
                 ee.printStackTrace();
             }
 
+            // Get conversations to the recipient seller currently has selected
             writer.println("Get Conversations");
             writer.println(conversationID);
             writer.flush();
 
+            // Clear the recipient selection
             recipientSelection.removeAllItems();
             try {
+                // Add conversation data to the message tavle data
                 int namesCount = Integer.parseInt(reader.readLine());
                 for (int i = 0; i < namesCount; i++) {
                     recipientSelection.addItem(reader.readLine());
@@ -1401,6 +1505,7 @@ class StoreApplication extends JFrame implements ActionListener {
                 writer.println(recipientName);
                 writer.flush();
 
+                // Add conversation data to the message tavle data
                 try {
                     String messageCountLine = reader.readLine();
                     int messageCount = Integer.parseInt(messageCountLine);
@@ -1415,9 +1520,11 @@ class StoreApplication extends JFrame implements ActionListener {
                         }
                     }
 
+                    // Add message data to the messages table
                     TableModel messagesDataTable = getMessagesTable(messageData);
                     msgTable.setModel(messagesDataTable);
 
+                    // Format the messages table so it looks nice
                     msgTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                     msgTable.setPreferredScrollableViewportSize(new Dimension(1000, 500));
                     msgTable.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -1425,6 +1532,7 @@ class StoreApplication extends JFrame implements ActionListener {
                     msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);
                     msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+                    // Leave the last two columns blank and add the "Edit Message" and "Delete Message" buttons
                     msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
                     msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
                             StoreApplication.this,
