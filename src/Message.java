@@ -1,5 +1,15 @@
 import java.util.ArrayList;
 
+/**
+ * Message
+ *
+ * This class deals with managing the data regarding messages. It has methods to
+ * create, edit, and delete messages, as well as access information regarding them.
+ *
+ * @author Sean Kim, Soham Paik, Yash Patel, lab sec l17
+ *
+ * @version December 10, 2023
+ */
 public class Message {
     private String senderID;        // ID of the sender of the message
     private String recipientID;     // ID of the recipient of the message
@@ -17,7 +27,8 @@ public class Message {
      * @param deletedForRecipient true if the recipient deleted it
      * @param order its order in the conversation it's in
      */
-    public Message(String senderID, String recipientID, String message, boolean deletedForSender, boolean deletedForRecipient, long order) {
+    public Message(String senderID, String recipientID, String message, boolean deletedForSender,
+                   boolean deletedForRecipient, long order) {
         this.senderID = senderID;
         this.recipientID = recipientID;
         this.message = message;
@@ -50,14 +61,27 @@ public class Message {
         return message;
     }
 
+    /**
+     * Returns deletedForSender
+     * @return deletedForSender
+     */
     public boolean isDeletedForSender() {
         return deletedForSender;
     }
 
+    /**
+     * Returns deletedForRecipient
+     * @return deletedForRecipient
+     */
     public boolean isDeletedForRecipient() {
         return deletedForRecipient;
     }
 
+    /**
+     * Returns whether the message is deleted for the user with the ID
+     * @param ID the ID of the user
+     * @return whether the message is deleted
+     */
     public boolean isDeleted(String ID) {
         return deletedForSender && ID.equals(senderID) || deletedForRecipient && ID.equals(recipientID);
     }
@@ -77,10 +101,11 @@ public class Message {
      * @return the length of the conversation
      */
     public static long getConversationLength(String senderID, String recipientID) {
-        Message[] messages = Account.getMessages(Account.toUserID(senderID));
-        long conversationLength = 0;
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));   // all messages of this sender
+        long conversationLength = 0;    // length of conversation
         for (Message message : messages) {
-            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
+            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) ||
+                    message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
                 if (!message.isDeleted(senderID)) {
                     conversationLength++;
                 }
@@ -96,17 +121,18 @@ public class Message {
      * @return an array of all the messages between the two
      */
     public static Message[] getConversationArray(String senderID, String recipientID) {
-        Message[] messages = Account.getMessages(Account.toUserID(senderID));
-        ArrayList<Message> conversationList = new ArrayList<>();
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));   // all messages of this sender
+        ArrayList<Message> conversationList = new ArrayList<>();    // arraylist of messages in conversation
         for (Message message : messages) {
-            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
+            if (message.senderID.equals(senderID) && message.recipientID.equals(recipientID) ||
+                    message.senderID.equals(recipientID) && message.recipientID.equals(senderID)) {
                 if (!message.isDeleted(senderID)) {
                     conversationList.add(message);
                 }
             }
         }
 
-        Message[] conversationArray = new Message[conversationList.size()];
+        Message[] conversationArray = new Message[conversationList.size()];     // array of messages in conversation
         for (int i = 0; i < conversationList.size(); i++) {
             conversationArray[i] = conversationList.get(i);
         }
@@ -120,20 +146,21 @@ public class Message {
      * @param message the message
      */
     public static void createMessage(String senderID, String recipientID, String message) {
-        Message toSend = new Message(senderID, recipientID, message, false, false, getConversationLength(senderID, recipientID));
+        Message toSend = new Message(senderID, recipientID, message, false, false,
+                getConversationLength(senderID, recipientID));
 
-        senderID = Account.toUserID(senderID);
-        Message[] senderMessages = Account.getMessages(senderID);
-        Message[] newSenderMessages = new Message[senderMessages.length + 1];
+        senderID = Account.toUserID(senderID);  // convert senderID to its user ID
+        Message[] senderMessages = Account.getMessages(senderID);   // all messages of sender
+        Message[] newSenderMessages = new Message[senderMessages.length + 1];   // new all messages of sender
         for (int i = 0; i < newSenderMessages.length - 1; i++) {
             newSenderMessages[i] = senderMessages[i];
         }
         newSenderMessages[newSenderMessages.length - 1] = toSend;
         Account.setMessages(senderID, newSenderMessages);
 
-        recipientID = Account.toUserID(recipientID);
-        Message[] recipientMessages = Account.getMessages(recipientID);
-        Message[] newRecipientMessages = new Message[recipientMessages.length + 1];
+        recipientID = Account.toUserID(recipientID);    // convert recipientID to its user ID
+        Message[] recipientMessages = Account.getMessages(recipientID);     // all messages of recipient
+        Message[] newRecipientMessages = new Message[recipientMessages.length + 1];   // new all messages of recipient
         for (int i = 0; i < newRecipientMessages.length - 1; i++) {
             newRecipientMessages[i] = recipientMessages[i];
         }
@@ -149,9 +176,10 @@ public class Message {
      * @param newMessage the new content of the message
      */
     public static void editMessage(String senderID, String recipientID, long order, String newMessage) {
-        Message[] messages = Account.getMessages(Account.toUserID(senderID));
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));   // all messages of sender
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) ||
+                    message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
                     && message.order == order) {
                 message.message = newMessage;
                 break;
@@ -159,9 +187,10 @@ public class Message {
         }
         Account.setMessages(Account.toUserID(senderID), messages);
 
-        messages = Account.getMessages(Account.toUserID(recipientID));
+        messages = Account.getMessages(Account.toUserID(recipientID));  // all messages of recipient
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) || message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID) ||
+                    message.senderID.equals(recipientID) && message.recipientID.equals(senderID))
                     && message.order == order) {
                 message.message = newMessage;
                 break;
@@ -177,24 +206,28 @@ public class Message {
      * @param order the order of the message
      */
     public static void deleteMessage(String senderID, String recipientID, long order) {
-        Message[] messages = Account.getMessages(Account.toUserID(senderID));
+        Message[] messages = Account.getMessages(Account.toUserID(senderID));   // all messages of sender
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) && message.order == order) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) &&
+                    message.order == order) {
                 message.deletedForSender = true;
                 break;
-            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) && message.order == order) {
+            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) &&
+                    message.order == order) {
                 message.deletedForRecipient = true;
                 break;
             }
         }
         Account.setMessages(Account.toUserID(senderID), messages);
 
-        messages = Account.getMessages(Account.toUserID(recipientID));
+        messages = Account.getMessages(Account.toUserID(recipientID));      // all messages of recipient
         for (Message message : messages) {
-            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) && message.order == order) {
+            if ((message.senderID.equals(senderID) && message.recipientID.equals(recipientID)) &&
+                    message.order == order) {
                 message.deletedForSender = true;
                 break;
-            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) && message.order == order) {
+            } else if (message.senderID.equals(recipientID) && message.recipientID.equals(senderID) &&
+                    message.order == order) {
                 message.deletedForRecipient = true;
                 break;
             }

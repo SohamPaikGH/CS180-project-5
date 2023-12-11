@@ -1,6 +1,16 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Store
+ *
+ * This class deals with managing the data regarding stores. It has methods to
+ * create, edit, and delete stores, as well as access information regarding them.
+ *
+ * @author Sean Kim, Soham Paik, Yash Patel, lab sec l17
+ *
+ * @version December 10, 2023
+ */
 public class Store {
     private String name;            // name of store
     private String ID;              // ID of store
@@ -50,7 +60,7 @@ public class Store {
      * @param description the description of the store
      */
     public static void createStore(String userID, String name, String description) {
-        String storeID = null;
+        String storeID = null;  // ID of new store
         try (BufferedReader bfr = new BufferedReader(new FileReader("storeIDIncrement.txt"))) {
             storeID = bfr.readLine();
         } catch (IOException e) {
@@ -65,9 +75,9 @@ public class Store {
             e.printStackTrace();
         }
 
-        Store newStore = new Store(name, storeID, description);
-        Store[] stores = Account.getStores(userID);
-        Store[] newStores = new Store[stores.length + 1];
+        Store newStore = new Store(name, storeID, description);     // the new store
+        Store[] stores = Account.getStores(userID);     // all user's stores
+        Store[] newStores = new Store[stores.length + 1];   // new all user's stores
         for (int i = 0; i < newStores.length - 1; i++) {
             newStores[i] = stores[i];
         }
@@ -82,7 +92,7 @@ public class Store {
      * @param description new description of the store
      */
     public static void editStore(String ID, String name, String description) {
-        Store[] stores = Account.getStores(Account.toUserID(ID));
+        Store[] stores = Account.getStores(Account.toUserID(ID));   // all user's stores
         for (Store store : stores) {
             if (store.getID().equals(ID)) {
                 store.name = name;
@@ -98,14 +108,14 @@ public class Store {
      * @param ID ID of the store
      */
     public static void deleteStore(String ID) {
-        Store[] stores = Account.getStores(Account.toUserID(ID));
-        ArrayList<Store> storesList = new ArrayList<>();
+        Store[] stores = Account.getStores(Account.toUserID(ID));   // all user's stores
+        ArrayList<Store> storesList = new ArrayList<>();    // arraylist of user's new all stores
         for (Store store : stores) {
             if (!store.getID().equals(ID)) {
                 storesList.add(store);
             }
         }
-        Store[] newStores = new Store[storesList.size()];
+        Store[] newStores = new Store[storesList.size()];   // array of user's new all stores
         for (int i = 0; i < newStores.length; i++) {
             newStores[i] = storesList.get(i);
         }
@@ -117,26 +127,35 @@ public class Store {
      * @return an array of all the stores
      */
     public static Store[] getStores() {
-        Account[] accounts = Account.readAccountsData();
-        ArrayList<Store> storesList = new ArrayList<>();
+        Account[] accounts = Account.readAccountsData();    // accounts data
+        ArrayList<Store> storesList = new ArrayList<>();    // arraylist of all the stores
         for (Account account : accounts) {
             for (Store store : account.getStores()) {
                 storesList.add(store);
             }
         }
-        Store[] stores = new Store[storesList.size()];
+        Store[] stores = new Store[storesList.size()];  // array of all the stores
         for (int i = 0; i < stores.length; i++) {
             stores[i] = storesList.get(i);
         }
         return stores;
     }
 
+    /**
+     * Returns the owner of the store
+     * @return the owner of the store
+     */
     public Account getOwner() {
         return Account.accountWithID(Account.toUserID(ID));
     }
 
+    /**
+     * Returns whether the store name exists
+     * @param storeName the store name
+     * @return whether the store name exists
+     */
     public static boolean storeNameExists(String storeName) {
-        Account[] accounts = Account.readAccountsData();
+        Account[] accounts = Account.readAccountsData();    // accounts data
         for (Account account : accounts) {
             for (Store store : account.getStores()) {
                 if (store.getName().equals(storeName)) {

@@ -38,7 +38,8 @@ public class Account {
      * @param blocked array containing ID's of users that this user blocked
      * @param invisibleTo array containing ID's of users that this user became invisible to
      */
-    public Account(String username, String email, String password, String role, String ID, Store[] stores, Message[] messages, String[] blocked, String[] invisibleTo) {
+    public Account(String username, String email, String password, String role, String ID, Store[] stores,
+                   Message[] messages, String[] blocked, String[] invisibleTo) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -736,7 +737,8 @@ public class Account {
         ArrayList<String> usernamesList = new ArrayList<>();    // list of usernames
         for (Account account : accounts) {
             if (!(account.ID.equals(ID) || Account.userCantSeeUser(ID, account.ID))) {
-                if (account.username.toLowerCase().contains(searchString.toLowerCase()) && !account.role.equals(Account.getRole(ID))) {
+                if (account.username.toLowerCase().contains(searchString.toLowerCase()) &&
+                        !account.role.equals(Account.getRole(ID))) {
                     usernamesList.add(account.username);
                 }
             }
@@ -784,6 +786,11 @@ public class Account {
         return invisibleTo;
     }
 
+    /**
+     * Returns the names of all the people this user had conversations with
+     * @param ID the user's ID
+     * @return the names of conversations
+     */
     public static String[] getConversationsWith(String ID) {
         HashSet<String> IDset = new HashSet<>();    // set of IDs they have exchanged messages with
         Message[] messages = Account.getMessages(ID);   // account's messages

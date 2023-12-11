@@ -292,17 +292,6 @@ public class Server extends Thread {
     }
 
     public static void main(String[] args) {
-        Account.resetAccountsData();
-        Account.createAccount("Customer1", "customer1@gmail.com", "Customer1", "Customer"); // ID = 0
-        Account.createAccount("Seller1", "seller1@gmail.com", "Seller1", "Seller");  // ID = 2
-//        Account.createAccount("Seller2", "seller2@gmail.com", "Seller2", "Seller");  // ID = 4
-//        Account.createAccount("Seller3", "seller3@gmail.com", "Seller3", "Seller");  // ID = 6
-//        Store.createStore("2", "Store1", "Seller1's first store");      // ID = 1
-//        Store.createStore("2", "Store2", "Seller1's second store");     // ID = 3
-//        Store.createStore("2", "Store3", "Seller1's third store");      // ID = 5
-//        Store.createStore("4", "Store4", "Seller2's store");    // ID = 7
-//        Store.createStore("6", "Store5", "Seller3's store");    // ID = 9
-
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(4242)) {
                 while (true) {
