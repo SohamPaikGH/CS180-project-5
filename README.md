@@ -68,3 +68,15 @@ store description. Since this class creates stores, it is able to write to and r
 `storeIDIncrememnt.txt` file. Writing to this file is done in a synchronized manner.
 
 ### StoreApplication
+This class runs the client application that the users will interact with. It connects to the server run 
+by the `Server.java` class and leaves all the processing of data to the server. It makes use of Java Swing GUI 
+in order to display information to and take inputs from the user. Each time this a client needs to make a 
+request to the server to carry out a certain task, the first line it writes indicates 
+what the server should do and what inputs it should expect, and then the following lines in provide the 
+necessary arguments. In the GUI, the main part of the application is displayed in a single JFrame with several 
+tabbed panes, including the Stores tab, the Conversations tab, and the Account tab. Each tab has its own set 
+of panels that contain the necessary GUI elements such as buttons and text boxes. In addition, each time the 
+user switches tabs, it refreshes the elements in the tab with updates information from the server. For some purposes, 
+the program creates new smaller JFrames with a more specific task. For example, there is a separate window for 
+the log in and sign up. Messages to the user indicating the success/failure of an operation are often 
+displayed through simple JOptionPanes.
