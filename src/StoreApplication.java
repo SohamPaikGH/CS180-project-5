@@ -930,7 +930,6 @@ class StoreApplication extends JFrame implements ActionListener {
                 // Otherwise, the server tells client the login info is invalid, which causes an error message to pop up
                 // An error message will also pop up if the server is not up
                 String line = reader.readLine();
-                System.out.println(line);
                 if (line.equals("Success")) {
                     ID = reader.readLine();
                     conversationID = ID;

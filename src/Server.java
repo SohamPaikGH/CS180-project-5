@@ -29,7 +29,6 @@ public class Server extends Thread {
              PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
             while (true) {
                 String command = reader.readLine();     // the first line the client writes in each exchange
-                System.out.println(command);
                 if (command.equals("Close Socket")) {
                     socket.close();
                 } else if (command.equals("Log In")) {
