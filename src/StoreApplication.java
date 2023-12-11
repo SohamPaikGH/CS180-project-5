@@ -19,7 +19,7 @@ import java.net.Socket;
  * server from the client are made by the StoreApplication object.
  *
  * @author Soham Paik, CS 180 Black
- * @version December 10, 2023
+ * @version December 11, 2023
  */
 class StoreApplication extends JFrame implements ActionListener {
     String host = "localhost"; // IP Address of Host
