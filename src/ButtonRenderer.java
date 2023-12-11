@@ -3,15 +3,15 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 /**
  * Button Renderer
- * <p>
- *     This class defines the custom ButtonRenderer used in the StoreApplication class.
- *     It is used to add buttons and their graphics to a column of cells in a JTable in Java Swing. This class
- *     is an extension of the DefaultCellEditor class in Java Swing. This class extends JButton and implements
- *     the TableCellRenderer interface.
  *
- * @author Soham Paik, CS 180 Black
+ * This class defines the custom ButtonRenderer used in the StoreApplication class.
+ * It is used to add buttons and their graphics to a column of cells in a JTable in Java Swing. This class
+ * is an extension of the DefaultCellEditor class in Java Swing. This class extends JButton and implements
+ * the TableCellRenderer interface.
+ *
+ * @author Sean Kim, Soham Paik, Yash Patel, CS 18000 Black, lab sec l17
+ *
  * @version December 11, 2023
- * </p>
  */
 class ButtonRenderer extends JButton implements TableCellRenderer {
 
@@ -20,7 +20,8 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                                                   int row, int column) {
         // Makes table cell look like a button
         if (isSelected) {
             setForeground(table.getSelectionForeground());

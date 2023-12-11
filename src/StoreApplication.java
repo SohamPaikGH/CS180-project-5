@@ -38,11 +38,11 @@ class StoreApplication extends JFrame implements ActionListener {
     JButton signInButton, blockRecipientButton, appearInvisibleToRecipientButton,
             signUpButton, registerButton, storeSendMessageButton, searchButton;
     JButton saveButton = new JButton("Save"); // Saves new username, email, and password in Account Settings tab
-    JButton clearButton = new JButton("Clear"); // Clears username, email, and password text fields in Account Settings
+    JButton clearButton = new JButton("Clear"); // Clears username, email, and password fields in Account Settings
     JButton deleteAccountButton = new JButton("Delete Account"); // Deletes account when pushed in Account Settings
     JButton contactStoreButton = new JButton("Contact Store"); // Initializes the Contact Store window
     JButton sendMessageButton = new JButton("Send"); // Sends message to specified store/user when clicked
-    JButton searchUserButton = new JButton("Search User"); // Initializes the Search User window in Conversations tab
+    JButton searchUserButton = new JButton("Search User"); // Initializes the Search User window in Conversations
     JButton createStoreButton = new JButton("Create Store"); // Creates store owned by user when triggered
     JTextField storeName; // Text field for taking input for store name
     JTextField storeDesc; // Text field for taking input for store description
@@ -640,12 +640,12 @@ class StoreApplication extends JFrame implements ActionListener {
             jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
             jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-            jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(), this,
-                    "Save Store Data"));
+            jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                    this, "Save Store Data"));
 
             jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), this,
-                    "Delete Store"));
+            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                    this, "Delete Store"));
 
         } else {
             jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -655,8 +655,8 @@ class StoreApplication extends JFrame implements ActionListener {
             jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
 
             jTable1.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), this,
-                    "Contact Store"));
+            jTable1.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
+                    this, "Contact Store"));
         }
         jTable1.setPreferredScrollableViewportSize(new Dimension(1000, 500));
 
@@ -945,8 +945,8 @@ class StoreApplication extends JFrame implements ActionListener {
                     setVisible(false);
                     EventQueue.invokeLater(this::initializeApp);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Please check your username and password " +
-                                    "before trying again.", "Error!",
+                    JOptionPane.showMessageDialog(null,
+                            "Please check your username and password " + "before trying again.", "Error!",
                             JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -984,7 +984,8 @@ class StoreApplication extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Saved.",
                         "Account Data", JOptionPane.INFORMATION_MESSAGE);
             } else if (line.equals("Blank")) {
-                JOptionPane.showMessageDialog(null, "At least one of your fields is blank. Please try again.",
+                JOptionPane.showMessageDialog(null,
+                        "At least one of your fields is blank. Please try again.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             } else if (line.equals("Username Taken")) {
                 JOptionPane.showMessageDialog(null, "That username is taken! Please try again.",
@@ -1071,13 +1072,14 @@ class StoreApplication extends JFrame implements ActionListener {
                         msgTable.getColumnModel().getColumn(3).setPreferredWidth(100);
 
                         msgTable.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-                        msgTable.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(new JCheckBox(),
+                        msgTable.getColumnModel().getColumn(2).setCellEditor(
+                                new ButtonEditor(new JCheckBox(),
                                 StoreApplication.this,
                                 "Edit Message"));
 
                         msgTable.getColumnModel().getColumn(3).setCellRenderer(new ButtonRenderer());
-                        msgTable.getColumnModel().getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(),
-                                StoreApplication.this,
+                        msgTable.getColumnModel().getColumn(3).setCellEditor(
+                                new ButtonEditor(new JCheckBox(), StoreApplication.this,
                                 "Delete Message"));
                     }
 
@@ -1087,7 +1089,8 @@ class StoreApplication extends JFrame implements ActionListener {
                             JOptionPane.ERROR_MESSAGE);
                 } else {
                     // The recipient deleted their account
-                    JOptionPane.showMessageDialog(null, "This recipient has deleted their account!", "Error",
+                    JOptionPane.showMessageDialog(null,
+                            "This recipient has deleted their account!", "Error",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
 
@@ -1121,8 +1124,8 @@ class StoreApplication extends JFrame implements ActionListener {
                             JOptionPane.ERROR_MESSAGE);
                 } else {
                     // The store no longer exists
-                    JOptionPane.showMessageDialog(null, "This store has been deleted!", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This store has been deleted!",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();
@@ -1167,12 +1170,12 @@ class StoreApplication extends JFrame implements ActionListener {
                 String response = reader.readLine();
                 if (response.equals("Invisible")) {
                     // The user is now invisible to the recipient
-                    JOptionPane.showMessageDialog(null, "You are now invisible to this user!", "Conversations",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "You are now invisible to this user!",
+                            "Conversations", JOptionPane.INFORMATION_MESSAGE);
                 } else if (response.equals("Visible")) {
                     // The user is now visible to the recipient
-                    JOptionPane.showMessageDialog(null, "You are now visible to this user!", "Conversations",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "You are now visible to this user!",
+                            "Conversations", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (IOException ee) {
                 ee.printStackTrace();
@@ -1213,15 +1216,18 @@ class StoreApplication extends JFrame implements ActionListener {
                     setVisible(true);
                 } else if (line.equals("Blank")) {
                     // Print an error if one of the fields was blank
-                    JOptionPane.showMessageDialog(null, "At least one of your fields is blank. Please try again.",
+                    JOptionPane.showMessageDialog(null,
+                            "At least one of your fields is blank. " + "Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Username Taken")) {
                     // If the username entered already exists in the system, print an error
-                    JOptionPane.showMessageDialog(null, "That username is taken! Please try again.",
+                    JOptionPane.showMessageDialog(null,
+                            "That username is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Email Taken")) {
                     // If the email entered already exists in the system, print an error
-                    JOptionPane.showMessageDialog(null, "That email is taken! Please try again.",
+                    JOptionPane.showMessageDialog(null,
+                            "That email is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (IOException ex) {
@@ -1235,7 +1241,8 @@ class StoreApplication extends JFrame implements ActionListener {
             writer.println(ID);
             writer.flush();
             // Tell the user their account was deleted and close the window
-            JOptionPane.showMessageDialog(null, "Account Deleted! Program will close.", "Account Settings",
+            JOptionPane.showMessageDialog(null, "Account Deleted! Program will close.",
+                    "Account Settings",
                     JOptionPane.INFORMATION_MESSAGE);
             mainFrame.dispose();
             // Also close the connection
@@ -1305,11 +1312,13 @@ class StoreApplication extends JFrame implements ActionListener {
 
                 } else if (line.equals("Name Blank")) {
                     // Tell the user they left the name blank and give them an error
-                    JOptionPane.showMessageDialog(null, "The store name is blank. Please try again.",
+                    JOptionPane.showMessageDialog(null,
+                            "The store name is blank. Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (line.equals("Name Exists")) {
                     // Tell the user the name already exists and give them an error
-                    JOptionPane.showMessageDialog(null, "That store name is taken! Please try again.",
+                    JOptionPane.showMessageDialog(null,
+                            "That store name is taken! Please try again.",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
